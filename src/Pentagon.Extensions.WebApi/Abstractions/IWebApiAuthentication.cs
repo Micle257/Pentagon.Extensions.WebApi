@@ -1,18 +1,18 @@
 ﻿// -----------------------------------------------------------------------
-//  <copyright file="IApiConfiguration.cs">
+//  <copyright file="IWebApiAuthentication.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
 namespace Pentagon.Extensions.WebApi.Abstractions
 {
-    using System;
+    using System.Threading.Tasks;
+    using Interfaces;
 
-    public interface IApiConfiguration
+    public interface IWebApiAuthentication
     {
-        int ApiVersion { get; }
-        Uri BaseUrl { get; }
-        string ClientId { get; }
-        ApiAuthorization Authorization { get; }
+        Task<bool> AuthenticateUserAsync(IAuthenticateApiCredentials credentials);
+
+        Task<bool> RepudiateUserAsync();
     }
 }

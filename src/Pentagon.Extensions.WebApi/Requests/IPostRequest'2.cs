@@ -1,10 +1,12 @@
 // -----------------------------------------------------------------------
-//  <copyright file="IPagedResponse.cs">
+//  <copyright file="IPostRequest'2.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Requests
 {
-    public interface IPagedResponse<TContent> : IListResponse<TContent>, IPagedResponseHeaders { }
+    using Interfaces;
+
+    public interface IPostRequest<TContent, TRequestBody> : IRequest<TContent>, IHasRequestBody<TRequestBody> { }
 }

@@ -4,7 +4,7 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Interfaces
 {
     using System;
     using System.Net.Http;

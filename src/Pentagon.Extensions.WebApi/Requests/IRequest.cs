@@ -4,9 +4,10 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Requests
 {
     using System.Collections.Generic;
+    using Interfaces;
 
     public interface IRequest : IHttpRequest, IHasRequestAuthorization
     {

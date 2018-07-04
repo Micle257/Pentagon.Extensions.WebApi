@@ -4,7 +4,7 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Interfaces
 {
     /// <summary> Represents a request that has authorization information. </summary>
     public interface IHasRequestAuthorization

@@ -1,10 +1,14 @@
 // -----------------------------------------------------------------------
-//  <copyright file="IPostRequest'2.cs">
+//  <copyright file="ISupportsPagination.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Interfaces
 {
-    public interface IPostRequest<TContent, TRequestBody> : IRequest<TContent>, IHasRequestBody<TRequestBody> { }
+    public interface ISupportsPagination
+    {
+        int? Page { get; set; }
+        int? Limit { get; set; }
+    }
 }

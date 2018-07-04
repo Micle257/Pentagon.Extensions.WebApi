@@ -1,14 +1,17 @@
 // -----------------------------------------------------------------------
-//  <copyright file="ISupportsPagination.cs">
+//  <copyright file="INoContentResponse.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface ISupportsPagination
+    using System;
+
+    public interface INoContentResponse
     {
-        int? Page { get; set; }
-        int? Limit { get; set; }
+        bool IsSuccess { get; }
+
+        Exception Exception { get; }
     }
 }

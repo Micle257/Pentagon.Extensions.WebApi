@@ -1,18 +1,13 @@
 ﻿// -----------------------------------------------------------------------
-//  <copyright file="IApiConfiguration.cs">
+//  <copyright file="IRequestHandlerFactory.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
 namespace Pentagon.Extensions.WebApi.Abstractions
 {
-    using System;
-
-    public interface IApiConfiguration
+    public interface IRequestHandlerFactory
     {
-        int ApiVersion { get; }
-        Uri BaseUrl { get; }
-        string ClientId { get; }
-        ApiAuthorization Authorization { get; }
+        IRequestHandler Create();
     }
 }

@@ -8,6 +8,7 @@ namespace Pentagon.Extensions.WebApi
 {
     using System;
     using System.Net.Http;
+    using Interfaces;
 
     /// <summary> Represents a HTTP request message defined in TraktAPI. </summary>
     public class RequestMessage : HttpRequestMessage, IRequestMessage

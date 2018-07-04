@@ -4,9 +4,10 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Abstractions
 {
-    using Abstractions;
+    using Interfaces;
+    using Requests;
 
     public interface IRequestMessageBuilder
     {

@@ -1,14 +1,12 @@
 // -----------------------------------------------------------------------
-//  <copyright file="IResponse.cs">
+//  <copyright file="IPagedResponse.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IResponse<TContent> : INoContentResponse
-    {
-        bool HasValue { get; }
-        TContent Value { get; }
-    }
+    using Interfaces;
+
+    public interface IPagedResponse<TContent> : IListResponse<TContent>, IPagedResponseHeaders { }
 }

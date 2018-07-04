@@ -1,19 +1,17 @@
 ﻿// -----------------------------------------------------------------------
-//  <copyright file="GetRequest.cs">
+//  <copyright file="ApiAuthorization.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
 namespace Pentagon.Extensions.WebApi
 {
-    using System.Net.Http;
-
-    public abstract class GetRequest<T> : Request<T>
+    public class ApiAuthorization
     {
         /// <inheritdoc />
-        public override AuthorizationRequirement AuthorizationRequirement => AuthorizationRequirement.NotRequired;
+        public bool IsAuthorized => Token != null;
 
         /// <inheritdoc />
-        public override HttpMethod Method => HttpMethod.Get;
+        public string Token { get; set; }
     }
 }

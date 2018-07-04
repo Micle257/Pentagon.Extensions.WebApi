@@ -4,14 +4,13 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Requests
 {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Web;
-    using Abstractions;
 
     public abstract class Request<T> : IRequest<T>
     {

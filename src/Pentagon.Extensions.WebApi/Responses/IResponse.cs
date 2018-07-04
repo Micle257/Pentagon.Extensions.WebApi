@@ -1,13 +1,14 @@
 // -----------------------------------------------------------------------
-//  <copyright file="IHasRequestBody.cs">
+//  <copyright file="IResponse.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IHasRequestBody<TRequestBody>
+    public interface IResponse<TContent> : INoContentResponse
     {
-        TRequestBody RequestBody { get; set; }
+        bool HasValue { get; }
+        TContent Value { get; }
     }
 }

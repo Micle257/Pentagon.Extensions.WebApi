@@ -4,11 +4,10 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Requests
 {
     using System;
     using System.Net.Http;
-    using Abstractions;
 
     public abstract class PostRequest<TContent, TRequestBody> : Request<TContent>, IPostRequest<TContent, TRequestBody>
             where TRequestBody : class

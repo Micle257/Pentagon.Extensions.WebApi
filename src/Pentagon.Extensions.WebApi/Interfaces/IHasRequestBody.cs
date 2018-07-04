@@ -1,17 +1,13 @@
 // -----------------------------------------------------------------------
-//  <copyright file="INoContentResponse.cs">
+//  <copyright file="IHasRequestBody.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Interfaces
 {
-    using System;
-
-    public interface INoContentResponse
+    public interface IHasRequestBody<TRequestBody>
     {
-        bool IsSuccess { get; }
-
-        Exception Exception { get; }
+        TRequestBody RequestBody { get; set; }
     }
 }

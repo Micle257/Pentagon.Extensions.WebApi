@@ -1,14 +1,14 @@
-// -----------------------------------------------------------------------
+﻿// -----------------------------------------------------------------------
 //  <copyright file="NoContentResponse.cs">
-//   Copyright (c) Michal Pokorn�. All Rights Reserved.
+//   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Responses
 {
     using System;
 
-    public class NoContentResponse : IEquatable<NoContentResponse>
+    public class NoContentResponse : IEquatable<NoContentResponse>, INoContentResponse
     {
         public bool IsSuccess { get; set; }
 
