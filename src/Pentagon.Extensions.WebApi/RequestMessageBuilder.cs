@@ -7,7 +7,6 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -57,10 +56,10 @@ namespace Pentagon.Extensions.WebApi
                 request.Content = content.httpContent;
                 request.RequestBodyJson = content.jsonContent;
             }
-            
+
             return request;
         }
-        
+
         /// <summary> Sets the request message headers for authorization by given <see cref="AuthorizationRequirement" />. </summary>
         protected virtual void SetAuthorizationHeaders(IRequestMessage request)
         {
@@ -87,7 +86,7 @@ namespace Pentagon.Extensions.WebApi
                 && _configuration.Authorization.IsAuthorized)
                 request.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
         }
-        
+
         (HttpContent httpContent, string jsonContent) GetRequestBodyContent()
         {
             var jsonBody = string.Empty;

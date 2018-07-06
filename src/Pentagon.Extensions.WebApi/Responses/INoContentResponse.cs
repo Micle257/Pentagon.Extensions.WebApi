@@ -14,7 +14,7 @@ namespace Pentagon.Extensions.WebApi.Responses
         bool IsSuccess { get; }
 
         Exception Exception { get; }
-        
+
         HttpStatusCode StatusCode { get; }
 
         string ReasonPhrase { get; }

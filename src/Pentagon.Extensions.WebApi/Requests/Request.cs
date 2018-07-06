@@ -51,8 +51,6 @@ namespace Pentagon.Extensions.WebApi.Requests
             return builder.Build();
         }
 
-        protected virtual void ValidateCore(RequestValidationBuilder builder) {}
-        
         /// <inheritdoc />
         public IDictionary<string, object> GetUrlParameters() => GetUrlPathParameters().Concat(GetUrlQueryParameters()).ToDictionary(a => a.Key, a => a.Value);
 
@@ -61,5 +59,7 @@ namespace Pentagon.Extensions.WebApi.Requests
 
         /// <inheritdoc />
         public virtual IDictionary<string, object> GetUrlPathParameters() => new ConcurrentDictionary<string, object>();
+
+        protected virtual void ValidateCore(RequestValidationBuilder builder) { }
     }
 }

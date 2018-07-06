@@ -6,7 +6,6 @@
 
 namespace Pentagon.Extensions.WebApi
 {
-    using System.Net;
     using Responses;
 
     public class ApiExceptionArguments
@@ -20,7 +19,7 @@ namespace Pentagon.Extensions.WebApi
         }
 
         public ApiExceptionArguments() { }
-        
+
         /// <summary> Gets or sets the request url. </summary>
         public string RequestUrl { get; set; }
 

@@ -6,12 +6,15 @@
 
 namespace Pentagon.Extensions.WebApi
 {
+    /// <summary> Contains information about API authorization such as token. </summary>
     public class ApiAuthorization
     {
-        /// <inheritdoc />
+        /// <summary> Gets a value indicating whether the token is set. </summary>
+        /// <value> <c> true </c> if the token is set; otherwise, <c> false </c>. </value>
         public bool IsAuthorized => Token != null;
 
-        /// <inheritdoc />
+        /// <summary> Gets or sets the token. </summary>
+        /// <value> The token. </value>
         public string Token { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace Pentagon.Extensions.WebApi
     using Abstractions;
     using Microsoft.Extensions.Options;
 
-    public class ApiConfiguration<T> : IApiConfiguration, IOptionsSnapshot<T>
+    public class ApiConfiguration<T> : IApiConfiguration
             where T : ApiOptions, new()
     {
         readonly IOptionsSnapshot<T> _snapshot;
@@ -19,6 +19,9 @@ namespace Pentagon.Extensions.WebApi
         {
             _snapshot = snapshot;
         }
+
+        /// <inheritdoc />
+        public T Value => _snapshot.Value;
 
         /// <inheritdoc />
         public int ApiVersion => Value.ApiVersion;
@@ -31,11 +34,5 @@ namespace Pentagon.Extensions.WebApi
 
         /// <inheritdoc />
         public ApiAuthorization Authorization { get; } = new ApiAuthorization();
-
-        /// <inheritdoc />
-        public T Value => _snapshot.Value;
-
-        /// <inheritdoc />
-        public T Get(string name) => _snapshot.Get(name);
     }
 }

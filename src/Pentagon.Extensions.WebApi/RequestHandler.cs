@@ -111,10 +111,7 @@ namespace Pentagon.Extensions.WebApi
 
                 var responseContent = await GetResponseContent(responseMessage).ConfigureAwait(false);
 
-                if (!responseMessage.IsSuccessStatusCode)
-                {
-
-                }
+                if (!responseMessage.IsSuccessStatusCode) { }
 
                 var objectContent = JsonHelpers.Deserialize<T>(responseContent);
                 var hasValue = !Equals(objectContent, default(T));
@@ -132,10 +129,10 @@ namespace Pentagon.Extensions.WebApi
                 {
                     response.IsSuccess = false;
                     response.Exception = new ApiException(new ApiExceptionArguments(url, body, response),
-                                                          "Single item must return content.",
-                                                          new ArgumentException(message: "Single item must return content."));
+                                                          message: "Single item must return content.",
+                                                          exception: new ArgumentException(message: "Single item must return content."));
                 }
-                
+
                 return response;
             }
             catch (Exception exception)
@@ -145,7 +142,7 @@ namespace Pentagon.Extensions.WebApi
                                        IsSuccess = false
                                };
 
-                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), "Error while executing request.", exception);
+                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), message: "Error while executing request.", exception: exception);
 
                 return response;
             }
@@ -176,7 +173,7 @@ namespace Pentagon.Extensions.WebApi
                                        RawContent = responseContent,
                                        StatusCode = responseMessage.StatusCode
                                };
-                
+
                 return response;
             }
             catch (Exception e)
@@ -186,7 +183,7 @@ namespace Pentagon.Extensions.WebApi
                                        IsSuccess = false
                                };
 
-                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), "Error while executing request.", e);
+                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), message: "Error while executing request.", exception: e);
 
                 return response;
             }
@@ -233,7 +230,7 @@ namespace Pentagon.Extensions.WebApi
                                        IsSuccess = false
                                };
 
-                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), "Error while executing request.", e);
+                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), message: "Error while executing request.", exception: e);
                 ;
 
                 return response;
@@ -305,7 +302,7 @@ namespace Pentagon.Extensions.WebApi
         async Task<HttpResponseMessage> ExecuteRequest(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.SendAsync((RequestMessage) requestMessage, cancellationToken).ConfigureAwait(false);
-            
+
             return response;
         }
 
@@ -338,7 +335,7 @@ namespace Pentagon.Extensions.WebApi
                 if (request is null)
                     throw new ArgumentNullException(nameof(request));
 
-             var validate =   request.Validate();
+                var validate = request.Validate();
 
                 if (!validate.IsValid)
                 {

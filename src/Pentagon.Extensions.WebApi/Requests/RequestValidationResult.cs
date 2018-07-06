@@ -1,4 +1,11 @@
-namespace Pentagon.Extensions.WebApi.Requests {
+// -----------------------------------------------------------------------
+//  <copyright file="RequestValidationResult.cs">
+//   Copyright (c) Michal Pokorný. All Rights Reserved.
+//  </copyright>
+// -----------------------------------------------------------------------
+
+namespace Pentagon.Extensions.WebApi.Requests
+{
     using System;
     using System.Collections.Generic;
     using System.Linq;

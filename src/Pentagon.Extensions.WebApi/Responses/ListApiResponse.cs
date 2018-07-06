@@ -12,15 +12,15 @@ namespace Pentagon.Extensions.WebApi.Responses
     public class ListApiResponse<TContent> : ApiResponse<IEnumerable<TContent>>, IListResponse<TContent>
     {
         /// <inheritdoc />
-        public IEnumerator<TContent> GetEnumerator() => Value.GetEnumerator();
-
-        /// <inheritdoc />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        /// <inheritdoc />
         public string SortBy { get; set; }
 
         /// <inheritdoc />
         public string SortHow { get; set; }
+
+        /// <inheritdoc />
+        public IEnumerator<TContent> GetEnumerator() => Value.GetEnumerator();
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
