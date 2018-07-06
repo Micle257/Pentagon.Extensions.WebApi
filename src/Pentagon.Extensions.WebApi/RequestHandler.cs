@@ -42,7 +42,9 @@ namespace Pentagon.Extensions.WebApi
         {
             Require.ValidateRequest(request);
             SetupHttpClient();
-            var msg = _builder.WithRequest(request).BuildRequestMessage().RequestMessage;
+
+            var msg = _builder.AddRequest(request).Build();
+
             return QuerySingleItem<T>(msg, cancellationToken);
         }
 
@@ -52,7 +54,7 @@ namespace Pentagon.Extensions.WebApi
             Require.ValidateRequest(postRequest);
             SetupHttpClient();
 
-            var msg = _builder.WithPostRequest(postRequest).BuildRequestMessage().RequestMessage;
+            var msg = _builder.AddPostRequest(postRequest).Build();
 
             return QuerySingleItem<TContent>(msg);
         }
@@ -61,7 +63,7 @@ namespace Pentagon.Extensions.WebApi
         {
             Require.ValidateRequest(request);
             SetupHttpClient();
-            var msg = _builder.WithRequest(request).BuildRequestMessage().RequestMessage;
+            var msg = _builder.AddRequest(request).Build();
             return QueryList<TContent>(msg);
         }
 
@@ -71,7 +73,7 @@ namespace Pentagon.Extensions.WebApi
             Require.ValidateRequest(request);
             SetupHttpClient();
 
-            var msg = _builder.WithRequest(request).BuildRequestMessage().RequestMessage;
+            var msg = _builder.AddRequest(request).Build();
 
             return QueryPagedList<TContent>(msg);
         }
@@ -80,6 +82,7 @@ namespace Pentagon.Extensions.WebApi
                 where TRequest : IRequest<TContent>, ISupportsPagination
         {
             var response = await ExecutePagedRequest<TContent, TRequest>(request).ConfigureAwait(false);
+
             if (response.IsSuccess && response.HasValue && response.ItemCount.HasValue)
             {
                 request.Limit = response.ItemCount.Value;
@@ -99,15 +102,19 @@ namespace Pentagon.Extensions.WebApi
         async Task<IResponse<T>> QuerySingleItem<T>(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
         {
             var responseMessage = default(HttpResponseMessage);
+            var url = requestMessage.Url;
+            var body = requestMessage.RequestBodyJson;
 
             try
             {
                 responseMessage = await ExecuteRequest(requestMessage, cancellationToken).ConfigureAwait(false);
 
-                if (responseMessage?.StatusCode == HttpStatusCode.NoContent)
-                    throw new ArgumentException(message: "Single item must return content.");
-
                 var responseContent = await GetResponseContent(responseMessage).ConfigureAwait(false);
+
+                if (!responseMessage.IsSuccessStatusCode)
+                {
+
+                }
 
                 var objectContent = JsonHelpers.Deserialize<T>(responseContent);
                 var hasValue = !Equals(objectContent, default(T));
@@ -116,21 +123,31 @@ namespace Pentagon.Extensions.WebApi
                                {
                                        IsSuccess = true,
                                        HasValue = hasValue,
-                                       Value = objectContent
+                                       Value = objectContent,
+                                       RawContent = responseContent,
+                                       StatusCode = responseMessage.StatusCode
                                };
 
-                //  if (responseMessage.Headers != null)
-                //      ParseSortingResponseHeaders(response, responseMessage.Headers);
-
+                if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    response.IsSuccess = false;
+                    response.Exception = new ApiException(new ApiExceptionArguments(url, body, response),
+                                                          "Single item must return content.",
+                                                          new ArgumentException(message: "Single item must return content."));
+                }
+                
                 return response;
             }
             catch (Exception exception)
             {
-                return new ApiResponse<T>
-                       {
-                               IsSuccess = false,
-                               Exception = exception
-                       };
+                var response = new ApiResponse<T>
+                               {
+                                       IsSuccess = false
+                               };
+
+                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), "Error while executing request.", exception);
+
+                return response;
             }
             finally
             {
@@ -141,6 +158,8 @@ namespace Pentagon.Extensions.WebApi
         async Task<IListResponse<TContent>> QueryList<TContent>(IRequestMessage requestMessage)
         {
             var responseMessage = default(HttpResponseMessage);
+            var url = requestMessage.Url;
+            var body = requestMessage.RequestBodyJson;
 
             try
             {
@@ -153,17 +172,23 @@ namespace Pentagon.Extensions.WebApi
                                {
                                        IsSuccess = true,
                                        HasValue = contentObject != null,
-                                       Value = contentObject
+                                       Value = contentObject,
+                                       RawContent = responseContent,
+                                       StatusCode = responseMessage.StatusCode
                                };
-
-                //   if (responseMessage.Headers != null)
-                //       ParseSortingResponseHeaders(response, responseMessage.Headers);
-
+                
                 return response;
             }
             catch (Exception e)
             {
-                return new ListApiResponse<TContent> {IsSuccess = false, Exception = e};
+                var response = new ListApiResponse<TContent>
+                               {
+                                       IsSuccess = false
+                               };
+
+                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), "Error while executing request.", e);
+
+                return response;
             }
             finally
             {
@@ -174,6 +199,8 @@ namespace Pentagon.Extensions.WebApi
         async Task<IPagedResponse<TContent>> QueryPagedList<TContent>(IRequestMessage requestMessage)
         {
             var responseMessage = default(HttpResponseMessage);
+            var url = requestMessage.Url;
+            var body = requestMessage.RequestBodyJson;
 
             try
             {
@@ -186,7 +213,9 @@ namespace Pentagon.Extensions.WebApi
                                {
                                        IsSuccess = true,
                                        HasValue = contentObject != null,
-                                       Value = contentObject
+                                       Value = contentObject,
+                                       RawContent = responseContent,
+                                       StatusCode = responseMessage.StatusCode
                                };
 
                 if (responseMessage.Headers != null)
@@ -199,7 +228,15 @@ namespace Pentagon.Extensions.WebApi
             }
             catch (Exception e)
             {
-                return new PagedApiResponse<TContent> {IsSuccess = false, Exception = e};
+                var response = new PagedApiResponse<TContent>
+                               {
+                                       IsSuccess = false
+                               };
+
+                response.Exception = new ApiException(new ApiExceptionArguments(url, body, response), "Error while executing request.", e);
+                ;
+
+                return response;
             }
             finally
             {
@@ -268,10 +305,7 @@ namespace Pentagon.Extensions.WebApi
         async Task<HttpResponseMessage> ExecuteRequest(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.SendAsync((RequestMessage) requestMessage, cancellationToken).ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-                await Require.HandleError(response, requestMessage).ConfigureAwait(false);
-
+            
             return response;
         }
 
@@ -304,24 +338,13 @@ namespace Pentagon.Extensions.WebApi
                 if (request is null)
                     throw new ArgumentNullException(nameof(request));
 
-                request.Validate();
-            }
+             var validate =   request.Validate();
 
-            public static async Task HandleError(HttpResponseMessage response, IRequestMessage requestMessage)
-            {
-                var responseContent = string.Empty;
-
-                if (response.Content != null)
-                    responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                var code = response.StatusCode;
-                var reason = response.ReasonPhrase;
-                var url = requestMessage.RequestUri;
-                var requestJson = requestMessage.RequestBodyJson;
-
-                var exceptionParams = new ApiExceptionArguments(url.AbsoluteUri, requestJson, responseContent, reason, code);
-
-                throw new ApiException(exceptionParams, reason);
+                if (!validate.IsValid)
+                {
+                    var ex = new AggregateException(validate.Errors);
+                    throw ex;
+                }
             }
         }
     }

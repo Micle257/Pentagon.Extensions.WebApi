@@ -28,76 +28,66 @@ namespace Pentagon.Extensions.WebApi
             _configuration = configuration;
         }
 
-        public IRequestMessage RequestMessage { get; protected set; }
-
         protected IRequest Request { get; private set; }
 
-        public IRequestMessageBuilder WithRequest(IRequest request)
+        public IRequestMessageBuilder AddRequest(IRequest request)
         {
             Request = request;
             return this;
         }
 
-        public IRequestMessageBuilder WithPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request)
+        public IRequestMessageBuilder AddPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request)
         {
             Request = request as IRequest;
             _requestBody = request.RequestBody;
             return this;
         }
 
-        public IRequestMessageBuilder BuildRequestMessage()
-        {
-            CreateRequestMessage();
-            SetRequestMessageHeadersForAuthorization();
-
-            if (_requestBody != null)
-                AddBodyContent();
-
-            return this;
-        }
-
-        protected virtual IRequestMessage CreateRequestMessage()
+        public IRequestMessage Build()
         {
             var url = BuildUrl();
-            RequestMessage = new RequestMessage(Request.Method, url) {Url = url.AbsoluteUri};
 
-            return RequestMessage;
+            var request = new RequestMessage(Request.Method, url) {Url = url.AbsoluteUri};
+
+            SetAuthorizationHeaders(request);
+
+            if (_requestBody != null)
+            {
+                var content = GetRequestBodyContent();
+                request.Content = content.httpContent;
+                request.RequestBodyJson = content.jsonContent;
+            }
+            
+            return request;
         }
-
+        
         /// <summary> Sets the request message headers for authorization by given <see cref="AuthorizationRequirement" />. </summary>
-        protected virtual void SetRequestMessageHeadersForAuthorization()
+        protected virtual void SetAuthorizationHeaders(IRequestMessage request)
         {
-            if (RequestMessage == null)
+            if (request == null)
                 throw new ArgumentNullException(nameof(RequestMessage));
 
             if (Request is ITrustedRequest)
             {
                 if (string.IsNullOrEmpty(_configuration.ClientId))
-                    throw new ApiException(new ApiExceptionArguments {StatusCode = HttpStatusCode.Unauthorized}, message: "Client Id is missing and it's required for this request.");
+                    throw new ArgumentException(message: "Client Id is missing and it's required for this request.");
 
-                RequestMessage.Headers.Add(ApiHeaderNames.TrustedClientId, _configuration.ClientId);
+                request.Headers.Add(ApiHeaderNames.TrustedClientId, _configuration.ClientId);
             }
 
             if (Request.AuthorizationRequirement == AuthorizationRequirement.Required)
             {
                 if (!_configuration.Authorization.IsAuthorized)
-                    throw new ApiException(new ApiExceptionArguments {StatusCode = HttpStatusCode.Unauthorized}, message: "Authorization is invalid and it's required for this request.");
+                    throw new ArgumentException(message: "Authorization is invalid and it's required for this request.");
 
-                RequestMessage.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
+                request.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
             }
 
             if (Request.AuthorizationRequirement == AuthorizationRequirement.Optimal
                 && _configuration.Authorization.IsAuthorized)
-                RequestMessage.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
+                request.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
         }
-
-        void AddBodyContent()
-        {
-            var content = GetRequestBodyContent();
-            RequestMessage.Content = content.httpContent;
-            RequestMessage.RequestBodyJson = content.jsonContent;
-        }
-
+        
         (HttpContent httpContent, string jsonContent) GetRequestBodyContent()
         {
             var jsonBody = string.Empty;
@@ -118,7 +108,7 @@ namespace Pentagon.Extensions.WebApi
         Uri BuildUrl()
         {
             var uriTemplate = new UriTemplate(Request.UriTemplateParameters);
-            var pathParameters = Request.GetUriPathParameters();
+            var pathParameters = Request.GetUrlParameters();
 
             foreach (var pair in pathParameters)
                 uriTemplate.AddParameter(pair.Key, pair.Value);

@@ -11,9 +11,8 @@ namespace Pentagon.Extensions.WebApi.Abstractions
 
     public interface IRequestMessageBuilder
     {
-        IRequestMessage RequestMessage { get; }
-        IRequestMessageBuilder WithRequest(IRequest request);
-        IRequestMessageBuilder WithPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request);
-        IRequestMessageBuilder BuildRequestMessage();
+        IRequestMessageBuilder AddRequest(IRequest request);
+        IRequestMessageBuilder AddPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request);
+        IRequestMessage Build();
     }
 }
