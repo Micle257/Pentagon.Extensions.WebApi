@@ -8,7 +8,7 @@
     <Description>Class library providing common logic for Web APIs.</Description>
     <Copyright>Copyright (c) Michal Pokorný. All Rights Reserved.</Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <PackageProjectUrl>https://github.com/Micle257/Pentagon.Extensions.WebApi</PackageProjectUrl>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
@@ -24,10 +24,10 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Pentagon.Extensions.IO.Json" Version="1.0.0" />
-    <PackageReference Include="Tavis.UriTemplates" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" PrivateAssets="All" />
+    <PackageReference Include="Pentagon.Extensions.IO.Json" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Tavis.UriTemplates" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

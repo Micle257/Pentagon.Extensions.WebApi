@@ -15,6 +15,8 @@ namespace Pentagon.Extensions.WebApi
         public static IServiceCollection AddApiConfiguration<TOptions>(this IServiceCollection services)
                 where TOptions : ApiOptions, new()
         {
+            services.AddOptions();
+
             services.AddScoped<IApiConfiguration>(p => new ApiConfiguration<TOptions>(p.GetRequiredService<IOptionsSnapshot<TOptions>>()));
 
             return services;
