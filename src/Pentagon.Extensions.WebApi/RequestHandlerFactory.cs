@@ -19,6 +19,6 @@ namespace Pentagon.Extensions.WebApi
             _configuration = configuration;
         }
 
-        public IRequestHandler Create() => new RequestHandler(_configuration, new RequestMessageBuilder(_configuration));
+        public IRequestHandler Create() => new RequestHandler(_configuration);
     }
 }

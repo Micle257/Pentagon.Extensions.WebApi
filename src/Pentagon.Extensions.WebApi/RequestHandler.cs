@@ -27,10 +27,10 @@ namespace Pentagon.Extensions.WebApi
 
         HttpClient _httpClient;
 
-        public RequestHandler(IApiConfiguration configuration, IRequestMessageBuilder builder)
+        public RequestHandler(IApiConfiguration configuration)
         {
             _configuration = configuration;
-            _builder = builder;
+            _builder = new RequestMessageBuilder(configuration);
         }
 
         /// <summary> Executes the single item request with no data sending. </summary>
