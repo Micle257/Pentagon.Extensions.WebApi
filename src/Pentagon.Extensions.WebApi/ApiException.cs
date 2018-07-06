@@ -10,13 +10,11 @@ namespace Pentagon.Extensions.WebApi
 
     public class ApiException : Exception
     {
-        public ApiException(ApiExceptionArguments arguments, string message) : base(message)
+        public ApiException(ApiExceptionArguments arguments, string message, Exception exception) : base(message, exception)
         {
             Arguments = arguments;
         }
-
-        public ApiException(ApiExceptionArguments arguments) : this(arguments, arguments.ServerReasonPhrase) { }
-
+        
         public ApiExceptionArguments Arguments { get; }
     }
 }
