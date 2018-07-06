@@ -11,5 +11,8 @@ namespace Pentagon.Extensions.WebApi.Responses
         public bool HasValue { get; set; }
 
         public TContent Value { get; set; }
+
+        /// <inheritdoc />
+        public string RawContent { get; set; }
     }
 }

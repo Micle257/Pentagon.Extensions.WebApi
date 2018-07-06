@@ -16,5 +16,11 @@ namespace Pentagon.Extensions.WebApi.Responses
 
         /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /// <inheritdoc />
+        public string SortBy { get; set; }
+
+        /// <inheritdoc />
+        public string SortHow { get; set; }
     }
 }

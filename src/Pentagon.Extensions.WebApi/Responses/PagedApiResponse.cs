@@ -14,11 +14,5 @@ namespace Pentagon.Extensions.WebApi.Responses
         public int? Limit { get; set; }
         public int? PageCount { get; set; }
         public int? ItemCount { get; set; }
-
-        /// <inheritdoc />
-        public string SortBy { get; set; }
-
-        /// <inheritdoc />
-        public string SortHow { get; set; }
     }
 }
