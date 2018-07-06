@@ -10,7 +10,7 @@ namespace Pentagon.Extensions.WebApi
 
     public class ApiOptions
     {
-        public Uri BaseUrl => new Uri(Url);
+        public Uri BaseUrl =>Url == null ? null : new Uri(Url);
         public int ApiVersion { get; set; } = 1;
         public string Url { get; set; }
         public string ClientId { get; set; }
