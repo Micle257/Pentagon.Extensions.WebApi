@@ -13,7 +13,7 @@ namespace Pentagon.Extensions.WebApi.Requests
     {
         string UriTemplate { get; }
         string UriTemplateParameters { get; }
-        IDictionary<string, object> GetUriPathParameters();
-        void Validate();
+        IDictionary<string, object> GetUrlParameters();
+        RequestValidationResult Validate();
     }
 }

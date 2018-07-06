@@ -27,7 +27,7 @@ namespace Pentagon.Extensions.WebApi.Requests
         {
             get
             {
-                var uriPath = GetUriPathParameters();
+                var uriPath = GetUrlQueryParameters();
 
                 if (!uriPath.Any())
                     return UriTemplate;
@@ -44,9 +44,22 @@ namespace Pentagon.Extensions.WebApi.Requests
         }
 
         /// <inheritdoc />
-        public virtual void Validate() { }
+        public RequestValidationResult Validate()
+        {
+            var builder = new RequestValidationBuilder();
+            ValidateCore(builder);
+            return builder.Build();
+        }
+
+        protected virtual void ValidateCore(RequestValidationBuilder builder) {}
+        
+        /// <inheritdoc />
+        public IDictionary<string, object> GetUrlParameters() => GetUrlPathParameters().Concat(GetUrlQueryParameters()).ToDictionary(a => a.Key, a => a.Value);
 
         /// <inheritdoc />
-        public virtual IDictionary<string, object> GetUriPathParameters() => new ConcurrentDictionary<string, object>();
+        public virtual IDictionary<string, object> GetUrlQueryParameters() => new ConcurrentDictionary<string, object>();
+
+        /// <inheritdoc />
+        public virtual IDictionary<string, object> GetUrlPathParameters() => new ConcurrentDictionary<string, object>();
     }
 }

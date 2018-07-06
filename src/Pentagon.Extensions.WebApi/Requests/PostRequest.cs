@@ -17,12 +17,12 @@ namespace Pentagon.Extensions.WebApi.Requests
 
         /// <inheritdoc />
         public override HttpMethod Method => HttpMethod.Post;
-
+        
         /// <inheritdoc />
-        public override void Validate()
+        protected override void ValidateCore(RequestValidationBuilder builder)
         {
             if (RequestBody == null)
-                throw new ArgumentNullException(nameof(RequestBody));
+                builder.AddError(new ArgumentNullException(nameof(RequestBody)));
         }
     }
 }
