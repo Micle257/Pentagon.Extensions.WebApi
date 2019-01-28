@@ -48,8 +48,10 @@ namespace Pentagon.Extensions.WebApi
             return QuerySingleItem<T>(msg, cancellationToken);
         }
 
-        public Task<IResponse<TContent>> ExecuteSingleItemPostRequest<TContent, TRequestBody>(IPostRequest<TContent, TRequestBody> postRequest)
+        /// <inheritdoc />
+        public Task<IResponse<TContent>> ExecuteSingleItemPostRequest<TContent, TRequestBody, TRequest>(TRequest postRequest)
                 where TRequestBody : class
+                where TRequest : IHasRequestBody<TRequestBody>, IRequest<TContent>
         {
             Require.ValidateRequest(postRequest);
             SetupHttpClient();
@@ -58,7 +60,7 @@ namespace Pentagon.Extensions.WebApi
 
             return QuerySingleItem<TContent>(msg);
         }
-
+        
         public Task<IListResponse<TContent>> ExecuteListRequestAsync<TContent>(IRequest<TContent> request)
         {
             Require.ValidateRequest(request);

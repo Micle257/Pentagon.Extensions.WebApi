@@ -14,7 +14,7 @@ namespace Pentagon.Extensions.WebApi
         /// <summary> The authorization header will be indicated. </summary>
         Required,
 
-        /// <summary> The authorization header is not required and won't be indated. </summary>
+        /// <summary> The authorization header is not required and won't be in-tented. </summary>
         NotRequired,
 
         /// <summary> The authorization header is optimal for request. </summary>

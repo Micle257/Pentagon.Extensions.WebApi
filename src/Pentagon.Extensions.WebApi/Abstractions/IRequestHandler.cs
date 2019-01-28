@@ -21,8 +21,9 @@ namespace Pentagon.Extensions.WebApi.Abstractions
         /// <returns> <see cref="TraktResponse{TContent}" /> instance with response information. </returns>
         Task<IResponse<T>> ExecuteSingleItemRequest<T>(IRequest<T> request, CancellationToken cancellationToken = default);
 
-        Task<IResponse<TContent>> ExecuteSingleItemPostRequest<TContent, TRequestBody>(IPostRequest<TContent, TRequestBody> postRequest)
-                where TRequestBody : class;
+        Task<IResponse<TContent>> ExecuteSingleItemPostRequest<TContent, TRequestBody, TRequest>(TRequest postRequest)
+                where TRequestBody : class
+                where TRequest : IHasRequestBody<TRequestBody>, IRequest<TContent>;
 
         Task<IListResponse<TContent>> ExecuteListRequestAsync<TContent>(IRequest<TContent> request);
 
