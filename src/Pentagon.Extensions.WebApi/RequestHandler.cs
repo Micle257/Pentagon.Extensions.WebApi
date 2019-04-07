@@ -16,9 +16,9 @@ namespace Pentagon.Extensions.WebApi
     using System.Threading.Tasks;
     using Abstractions;
     using Interfaces;
+    using IO.Json;
     using Requests;
     using Responses;
-    using Utilities.Data.Json;
 
     public class RequestHandler : IRequestHandler
     {

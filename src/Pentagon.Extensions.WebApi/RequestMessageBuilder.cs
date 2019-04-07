@@ -12,9 +12,9 @@ namespace Pentagon.Extensions.WebApi
     using System.Text;
     using Abstractions;
     using Interfaces;
+    using IO.Json;
     using Requests;
     using Tavis.UriTemplates;
-    using Utilities.Data.Json;
 
     public class RequestMessageBuilder : IRequestMessageBuilder
     {
