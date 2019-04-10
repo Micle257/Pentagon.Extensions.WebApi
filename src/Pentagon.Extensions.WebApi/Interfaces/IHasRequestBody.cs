@@ -6,8 +6,13 @@
 
 namespace Pentagon.Extensions.WebApi.Interfaces
 {
-    public interface IHasRequestBody<TRequestBody>
+    public interface IHasRequestBody
     {
-        TRequestBody RequestBody { get; set; }
+        object RequestBody { get; set; }
+    }
+
+    public interface IHasRequestBody<T> : IHasRequestBody
+    {
+        new T RequestBody { get; set; }
     }
 }

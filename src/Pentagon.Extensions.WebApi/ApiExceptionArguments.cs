@@ -11,7 +11,7 @@ namespace Pentagon.Extensions.WebApi
     public class ApiExceptionArguments
     {
         /// <inheritdoc />
-        public ApiExceptionArguments(string requestUrl, string requestBody, INoContentResponse response)
+        public ApiExceptionArguments(string requestUrl, string requestBody, IResponse response)
         {
             RequestUrl = requestUrl;
             RequestBody = requestBody;
@@ -27,6 +27,6 @@ namespace Pentagon.Extensions.WebApi
         public string RequestBody { get; set; }
 
         /// <summary> Gets or sets the response content. </summary>
-        public INoContentResponse Response { get; set; }
+        public IResponse Response { get; set; }
     }
 }

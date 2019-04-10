@@ -26,9 +26,7 @@ namespace Pentagon.Extensions.WebApi
 
         public static IServiceCollection AddWebApiCore(this IServiceCollection services)
         {
-            services.AddScoped<IRequestHandlerFactory, RequestHandlerFactory>();
             services.AddScoped<IRequestHandler, RequestHandler>();
-            services.AddScoped<IRequestMessageBuilder, RequestMessageBuilder>();
 
             return services;
         }

@@ -6,10 +6,14 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IResponse<TContent> : INoContentResponse
+    using System.Net.Http.Headers;
+
+    public interface IResponse<out TContent> : IResponse
     {
         bool HasValue { get; }
+
         TContent Value { get; }
+
         string RawContent { get; }
     }
 }

@@ -9,6 +9,7 @@ namespace Pentagon.Extensions.WebApi.Interfaces
     public interface ISupportsPagination
     {
         int? Page { get; set; }
+
         int? Limit { get; set; }
     }
 }

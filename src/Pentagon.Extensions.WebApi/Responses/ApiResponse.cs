@@ -6,6 +6,8 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
+    using System.Net.Http.Headers;
+
     public class ApiResponse<TContent> : NoContentResponse, IResponse<TContent>
     {
         public bool HasValue { get; set; }

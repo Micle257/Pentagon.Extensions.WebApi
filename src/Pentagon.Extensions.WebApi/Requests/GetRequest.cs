@@ -11,9 +11,6 @@ namespace Pentagon.Extensions.WebApi.Requests
     public abstract class GetRequest<T> : Request<T>
     {
         /// <inheritdoc />
-        public override AuthorizationRequirement AuthorizationRequirement => AuthorizationRequirement.NotRequired;
-
-        /// <inheritdoc />
         public override HttpMethod Method => HttpMethod.Get;
     }
 }

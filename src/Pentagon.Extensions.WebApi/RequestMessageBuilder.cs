@@ -8,47 +8,54 @@ namespace Pentagon.Extensions.WebApi
 {
     using System;
     using System.Net.Http;
-    using System.Net.Http.Headers;
     using System.Text;
-    using Abstractions;
     using Interfaces;
     using IO.Json;
     using Requests;
     using Tavis.UriTemplates;
 
+    public interface IRequestMessageBuilder
+    {
+        IRequestMessageBuilder AddBaseUrl(Uri uri);
+
+        IRequestMessageBuilder AddRequest(IRequest request);
+
+        IRequestMessage Build();
+    }
+
     public class RequestMessageBuilder : IRequestMessageBuilder
     {
-        readonly IApiConfiguration _configuration;
-
         object _requestBody;
 
-        public RequestMessageBuilder(IApiConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         protected IRequest Request { get; private set; }
+
+        protected Uri BaseUrl { get; private set; }
+
+        public IRequestMessageBuilder AddBaseUrl(Uri uri)
+        {
+            BaseUrl = uri;
+            return this;
+        }
 
         public IRequestMessageBuilder AddRequest(IRequest request)
         {
             Request = request;
+
+            if (request is IHasRequestBody body)
+                _requestBody = body.RequestBody;
+
             return this;
         }
-
-        public IRequestMessageBuilder AddPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request)
-        {
-            Request = request as IRequest;
-            _requestBody = request.RequestBody;
-            return this;
-        }
-
+        
         public IRequestMessage Build()
         {
             var url = BuildUrl();
 
-            var request = new RequestMessage(Request.Method, url) {Url = url.AbsoluteUri};
-
-            SetAuthorizationHeaders(request);
+            var request = new RequestMessage(Request.Method, url)
+                          {
+                                  Url = url.AbsoluteUri,
+                                  Request = Request
+                          };
 
             if (_requestBody != null)
             {
@@ -57,35 +64,12 @@ namespace Pentagon.Extensions.WebApi
                 request.RequestBodyJson = content.jsonContent;
             }
 
+            request = BuildCore(request);
+
             return request;
         }
 
-        /// <summary> Sets the request message headers for authorization by given <see cref="AuthorizationRequirement" />. </summary>
-        protected virtual void SetAuthorizationHeaders(IRequestMessage request)
-        {
-            if (request == null)
-                throw new ArgumentNullException(nameof(RequestMessage));
-
-            if (Request is ITrustedRequest)
-            {
-                if (string.IsNullOrEmpty(_configuration.ClientId))
-                    throw new ArgumentException(message: "Client Id is missing and it's required for this request.");
-
-                request.Headers.Add(ApiHeaderNames.TrustedClientId, _configuration.ClientId);
-            }
-
-            if (Request.AuthorizationRequirement == AuthorizationRequirement.Required)
-            {
-                if (!_configuration.Authorization.IsAuthorized)
-                    throw new ArgumentException(message: "Authorization is invalid and it's required for this request.");
-
-                request.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
-            }
-
-            if (Request.AuthorizationRequirement == AuthorizationRequirement.Optimal
-                && _configuration.Authorization.IsAuthorized)
-                request.Headers.Authorization = new AuthenticationHeaderValue(ApiHeaderNames.AuthorizationHeader, _configuration.Authorization.Token);
-        }
+        protected virtual RequestMessage BuildCore(RequestMessage request) => request;
 
         (HttpContent httpContent, string jsonContent) GetRequestBodyContent()
         {
@@ -113,7 +97,7 @@ namespace Pentagon.Extensions.WebApi
                 uriTemplate.AddParameter(pair.Key, pair.Value);
 
             var uri = uriTemplate.Resolve();
-            return new Uri(_configuration.BaseUrl, uri);
+            return new Uri(BaseUrl, uri);
         }
     }
 }

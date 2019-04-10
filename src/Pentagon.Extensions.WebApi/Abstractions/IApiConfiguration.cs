@@ -11,8 +11,7 @@ namespace Pentagon.Extensions.WebApi.Abstractions
     public interface IApiConfiguration
     {
         int ApiVersion { get; }
+
         Uri BaseUrl { get; }
-        string ClientId { get; }
-        ApiAuthorization Authorization { get; }
     }
 }

@@ -6,6 +6,7 @@
 
 namespace Pentagon.Extensions.WebApi.Requests
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
@@ -14,9 +15,6 @@ namespace Pentagon.Extensions.WebApi.Requests
 
     public abstract class Request<T> : IRequest<T>
     {
-        /// <inheritdoc />
-        public abstract AuthorizationRequirement AuthorizationRequirement { get; }
-
         /// <inheritdoc />
         public abstract HttpMethod Method { get; }
 
@@ -29,7 +27,7 @@ namespace Pentagon.Extensions.WebApi.Requests
             {
                 var uriPath = GetUrlQueryParameters();
 
-                if (!uriPath.Any())
+                if (uriPath?.Any() == false)
                     return UriTemplate;
 
                 var parms = uriPath.Keys.Aggregate((a, b) => $"{a},{b}");
@@ -44,10 +42,15 @@ namespace Pentagon.Extensions.WebApi.Requests
         }
 
         /// <inheritdoc />
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(1);
+
+        /// <inheritdoc />
         public RequestValidationResult Validate()
         {
             var builder = new RequestValidationBuilder();
+
             ValidateCore(builder);
+
             return builder.Build();
         }
 
@@ -55,10 +58,10 @@ namespace Pentagon.Extensions.WebApi.Requests
         public IDictionary<string, object> GetUrlParameters() => GetUrlPathParameters().Concat(GetUrlQueryParameters()).ToDictionary(a => a.Key, a => a.Value);
 
         /// <inheritdoc />
-        public virtual IDictionary<string, object> GetUrlQueryParameters() => new ConcurrentDictionary<string, object>();
+        protected virtual IDictionary<string, object> GetUrlQueryParameters() => new ConcurrentDictionary<string, object>();
 
         /// <inheritdoc />
-        public virtual IDictionary<string, object> GetUrlPathParameters() => new ConcurrentDictionary<string, object>();
+        protected virtual IDictionary<string, object> GetUrlPathParameters() => new ConcurrentDictionary<string, object>();
 
         protected virtual void ValidateCore(RequestValidationBuilder builder) { }
     }

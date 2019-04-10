@@ -8,8 +8,9 @@ namespace Pentagon.Extensions.WebApi.Responses
 {
     using System;
     using System.Net;
+    using System.Net.Http.Headers;
 
-    public class NoContentResponse : INoContentResponse
+    public class NoContentResponse : IResponse
     {
         public bool IsSuccess { get; set; }
 
@@ -21,5 +22,8 @@ namespace Pentagon.Extensions.WebApi.Responses
 
         /// <inheritdoc />
         public string ReasonPhrase { get; set; }
+
+        /// <inheritdoc />
+        public HttpResponseHeaders Headers { get; set; }
     }
 }

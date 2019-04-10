@@ -10,9 +10,9 @@ namespace Pentagon.Extensions.WebApi
     {
         public const string AuthorizationHeader = "Bearer";
 
-        public const string TrustedClientId = "X-Trusted-Client-Id";
+        const string TrustedClientId = "X-Trusted-Client-Id";
 
-        public static class PaginationHeaders
+        static class PaginationHeaders
         {
             public const string Page = "X-Pagination-Page";
             public const string Limit = "X-Pagination-Limit";
@@ -20,7 +20,7 @@ namespace Pentagon.Extensions.WebApi
             public const string ItemCount = "X-Pagination-Item-Count";
         }
 
-        public static class SortHeaders
+        static class SortHeaders
         {
             public const string SortBy = "X-Sort-By";
             public const string SortHow = "X-Sort-How";
