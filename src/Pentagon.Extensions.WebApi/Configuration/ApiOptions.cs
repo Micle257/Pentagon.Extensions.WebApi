@@ -7,12 +7,12 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System;
+    using Abstractions;
 
-    public class ApiOptions
+    public class ApiOptions : IApiConfiguration
     {
-        public Uri BaseUrl => Url == null ? null : new Uri(Url);
+        public Uri BaseUrl { get; set; }
+
         public int ApiVersion { get; set; } = 1;
-        public string Url { get; set; }
-        public string ClientId { get; set; }
     }
 }

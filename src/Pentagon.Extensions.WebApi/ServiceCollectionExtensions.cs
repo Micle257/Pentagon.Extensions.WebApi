@@ -7,17 +7,21 @@
 namespace Pentagon.Extensions.WebApi
 {
     using Abstractions;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
 
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddApiConfiguration<TOptions>(this IServiceCollection services)
+        public static IServiceCollection AddApiConfiguration<TOptions>(this IServiceCollection services, IConfiguration configuration = null)
                 where TOptions : ApiOptions, new()
         {
             services.AddOptions();
 
-            services.AddScoped<IApiConfiguration>(p => new ApiConfiguration<TOptions>(p.GetRequiredService<IOptionsSnapshot<TOptions>>()));
+            if (configuration != null)
+                services.Configure<ApiOptions>(configuration);
+
+            services.AddScoped<IApiConfiguration, ApiConfiguration<ApiOptions>>();
 
             return services;
         }
