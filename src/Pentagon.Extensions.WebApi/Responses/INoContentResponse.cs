@@ -13,14 +13,16 @@ namespace Pentagon.Extensions.WebApi.Responses
 
     public interface IResponse
     {
-        bool IsSuccess { get; }
+        bool IsSuccess { get; set; }
 
-        Exception Exception { get; }
+        ApiException Exception { get; set; }
 
-        HttpStatusCode StatusCode { get; }
+        HttpStatusCode StatusCode { get; set; }
 
-        string ReasonPhrase { get; }
+        string ReasonPhrase { get; set; }
 
-        HttpResponseHeaders Headers { get; }
+        HttpResponseHeaders Headers { get; set; }
+        
+        string RawContent { get; set; }
     }
 }

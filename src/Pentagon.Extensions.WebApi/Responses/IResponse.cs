@@ -13,7 +13,5 @@ namespace Pentagon.Extensions.WebApi.Responses
         bool HasValue { get; }
 
         TContent Value { get; }
-
-        string RawContent { get; }
     }
 }

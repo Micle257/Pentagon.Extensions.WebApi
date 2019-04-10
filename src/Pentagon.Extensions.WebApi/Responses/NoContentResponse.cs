@@ -12,10 +12,25 @@ namespace Pentagon.Extensions.WebApi.Responses
 
     public class NoContentResponse : IResponse
     {
+        public NoContentResponse()
+        {
+            
+        }
+
+        internal NoContentResponse(IResponse toCopy)
+        {
+            IsSuccess = toCopy.IsSuccess;
+            Exception = toCopy.Exception;
+            StatusCode = toCopy.StatusCode;
+            ReasonPhrase = toCopy.ReasonPhrase;
+            Headers = toCopy.Headers;
+            RawContent = toCopy.RawContent;
+        }
+
         public bool IsSuccess { get; set; }
 
         /// <inheritdoc />
-        public Exception Exception { get; set; }
+        public ApiException Exception { get; set; }
 
         /// <inheritdoc />
         public HttpStatusCode StatusCode { get; set; }
@@ -25,5 +40,8 @@ namespace Pentagon.Extensions.WebApi.Responses
 
         /// <inheritdoc />
         public HttpResponseHeaders Headers { get; set; }
+
+        /// <inheritdoc />
+        public string RawContent { get; set; }
     }
 }

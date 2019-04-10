@@ -11,6 +11,22 @@ namespace Pentagon.Extensions.WebApi.Responses
 
     public class PagedApiResponse<TContent> : ListApiResponse<TContent>, IPagedResponse<TContent>
     {
+        public PagedApiResponse()
+        {
+
+        }
+
+        internal PagedApiResponse(IResponse response) : base(response)
+        {
+            if (response is IPagedResponseHeaders pagedResponseHeaders)
+            {
+                Page = pagedResponseHeaders.Page;
+                Limit = pagedResponseHeaders.Limit;
+                PageCount = pagedResponseHeaders.PageCount;
+                ItemCount = pagedResponseHeaders.ItemCount;
+            }
+        }
+
         public int? Page { get; set; }
 
         public int? Limit { get; set; }

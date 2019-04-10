@@ -16,19 +16,10 @@ namespace Pentagon.Extensions.WebApi
     using Abstractions;
     using Interfaces;
     using IO.Json;
+    using JetBrains.Annotations;
     using Requests;
     using Responses;
-
-    public class RequestExecuteResult<TResponse>
-        where TResponse : IResponse
-    {
-        public bool IsSuccessful { get; set; }
-
-        public Exception Exception { get; set; }
-
-        public TResponse Response { get; set; }
-    }
-
+    
     public abstract class RequestHandler : IRequestHandler
     {
         HttpClient _httpClient;
@@ -84,10 +75,19 @@ namespace Pentagon.Extensions.WebApi
 
         protected abstract IRequestMessage BuildMessage(IRequest request);
         
-        async Task<RequestExecuteResult<TResponse>> QueryAsync<TResponse>(IRequestMessage requestMessage, Func<HttpResponseMessage, string ,TResponse> res, CancellationToken cancellationToken = default)
+        async Task<IResponse> QueryAsync<TResponse>([NotNull] IRequestMessage requestMessage,
+                                                    [NotNull] Func<HttpResponseMessage, string ,TResponse> res,
+                                                    CancellationToken cancellationToken = default)
             where TResponse : IResponse
         {
+            if (requestMessage == null)
+                throw new ArgumentNullException(nameof(requestMessage));
+
+            if (res == null)
+                throw new ArgumentNullException(nameof(res));
+
             var responseMessage = default(HttpResponseMessage);
+
             var url = requestMessage.Url;
             var body = requestMessage.RequestBodyJson;
 
@@ -100,41 +100,36 @@ namespace Pentagon.Extensions.WebApi
                 var error = HandleResponseStatusCode(responseMessage, requestMessage);
 
                 var response = res(responseMessage, responseContent);
-
-                //if (response.StatusCode == HttpStatusCode.NoContent)
-                //{
-                //    response.IsSuccess = false;
-                //    response.Exception = new ApiException(new ApiExceptionArguments(url, body, response),
-                //                                          message: "Single item must return content.",
-                //                                          new ArgumentException(message: "Single item must return content."));
-                //}
-
-
+                
                 if (error != null)
                 {
-                    return new RequestExecuteResult<TResponse>
-                           {
-                                IsSuccessful = false,
-                                Exception = error,
-                                Response = response
-                           };
+                    response.IsSuccess = false;
+                    response.Exception = error;
                 }
 
                 response = HandleResponseHeaders(responseMessage.Headers, response);
 
-                return new RequestExecuteResult<TResponse>
-                {
-                               IsSuccessful = true,
-                               Response = response
-                       };
+                response.IsSuccess = true;
+                response.Headers = responseMessage.Headers;
+                response.ReasonPhrase = responseMessage.ReasonPhrase;
+                response.StatusCode = responseMessage.StatusCode;
+
+                return response;
             }
             catch (Exception exception)
             {
-                var response = new RequestExecuteResult<TResponse>
+                var response = new NoContentResponse
+                               {
+                                       Exception = new ApiException(new ApiExceptionArguments(url, body, null), message: "Error while executing request.", exception),
+                                       IsSuccess = false
+                };
+
+                if (responseMessage != null)
                 {
-                    IsSuccessful = false,
-                    Exception = new ApiException(new ApiExceptionArguments(url, body, null), message: "Error while executing request.", exception)
-            };
+                    response.Headers = responseMessage.Headers;
+                    response.ReasonPhrase = responseMessage.ReasonPhrase;
+                    response.StatusCode = responseMessage.StatusCode;
+                }
                 
                 return response;
             }
@@ -144,7 +139,7 @@ namespace Pentagon.Extensions.WebApi
             }
         }
 
-        protected virtual Exception HandleResponseStatusCode(HttpResponseMessage responseMessage, IRequestMessage requestMessage)
+        protected virtual ApiException HandleResponseStatusCode(HttpResponseMessage responseMessage, IRequestMessage requestMessage)
         {
 
 
@@ -171,19 +166,19 @@ namespace Pentagon.Extensions.WebApi
 
                                  var response = new ApiResponse<T>
                                                 {
-                                                        IsSuccess = true,
                                                         HasValue = hasValue,
                                                         Value = objectContent,
-                                                        RawContent = content,
-                                                        StatusCode = message.StatusCode,
-                                                        Headers = message.Headers
+                                                        RawContent = content
                                                 };
 
                                  return response;
                              },
                              cancellationToken);
 
-            return result.Response;
+            if (result is IResponse<T> res)
+                return res;
+
+            return new ApiResponse<T>(result);
         }
 
         async Task<IListResponse<TContent>> QueryList<TContent>(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
@@ -195,19 +190,19 @@ namespace Pentagon.Extensions.WebApi
 
                                               var response = new ListApiResponse<TContent>
                                                              {
-                                                                     IsSuccess = true,
                                                                      HasValue = contentObject != null,
                                                                      Value = contentObject,
-                                                                     RawContent = content,
-                                                                     StatusCode = message.StatusCode,
-                                                                     Headers = message.Headers
+                                                                     RawContent = content
                                                              };
 
                                               return response;
                                           },
                                           cancellationToken);
 
-            return result.Response;
+            if (result is IListResponse<TContent> res)
+                return res;
+
+            return new ListApiResponse<TContent>(result);
         }
 
         async Task<IPagedResponse<TContent>> QueryPagedList<TContent>(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
@@ -219,19 +214,19 @@ namespace Pentagon.Extensions.WebApi
 
                                               var response = new PagedApiResponse<TContent>
                                                              {
-                                                                     IsSuccess = true,
                                                                      HasValue = contentObject != null,
                                                                      Value = contentObject,
-                                                                     RawContent = content,
-                                                                     StatusCode = message.StatusCode,
-                                                                     Headers = message.Headers
+                                                                     RawContent = content
                                                              };
 
                                               return response;
                                           },
                                           cancellationToken);
 
-            return result.Response;
+            if (result is IPagedResponse<TContent> res)
+                return res;
+
+            return new PagedApiResponse<TContent>(result);
         }
 
         /// <summary> Gets the string content of the response. </summary>

@@ -10,11 +10,27 @@ namespace Pentagon.Extensions.WebApi.Responses
 
     public class ApiResponse<TContent> : NoContentResponse, IResponse<TContent>
     {
+        public ApiResponse()
+        {
+            
+        }
+
+        internal ApiResponse(IResponse response) : base(response)
+        {
+            if (response is IResponse<TContent> contentResponse)
+            {
+                HasValue = contentResponse.HasValue;
+                Value = contentResponse.Value;
+            }
+            else
+            {
+                HasValue = false;
+                Value = default;
+            }
+        }
+
         public bool HasValue { get; set; }
 
         public TContent Value { get; set; }
-
-        /// <inheritdoc />
-        public string RawContent { get; set; }
     }
 }
