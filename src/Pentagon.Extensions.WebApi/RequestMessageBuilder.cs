@@ -20,7 +20,7 @@ namespace Pentagon.Extensions.WebApi
         object _requestBody;
 
         protected IRequest Request { get; private set; }
-        
+
         protected Uri BaseUrl { get; private set; }
 
         public IRequestMessageBuilder AddBaseUrl(Uri uri)
@@ -38,15 +38,6 @@ namespace Pentagon.Extensions.WebApi
 
             return this;
         }
-
-        protected virtual IDictionary<string,object> GetUrlQueryParameters()
-        {
-            var requestQueryParameters = Request.GetUrlQueryParameters();
-
-            return requestQueryParameters;
-        }
-
-        protected virtual string GetUrlTemplate() => Request.UriTemplate;
 
         public IRequestMessage Build()
         {
@@ -69,6 +60,15 @@ namespace Pentagon.Extensions.WebApi
 
             return request;
         }
+
+        protected virtual IDictionary<string, object> GetUrlQueryParameters()
+        {
+            var requestQueryParameters = Request.GetUrlQueryParameters();
+
+            return requestQueryParameters;
+        }
+
+        protected virtual string GetUrlTemplate() => Request.UriTemplate;
 
         protected virtual RequestMessage BuildCore(RequestMessage request) => request;
 

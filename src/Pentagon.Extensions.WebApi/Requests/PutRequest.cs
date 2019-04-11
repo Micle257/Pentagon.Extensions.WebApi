@@ -13,10 +13,10 @@ namespace Pentagon.Extensions.WebApi.Requests
     public abstract class PutRequest<T> : Request<T>, IRequestWithBody
     {
         /// <inheritdoc />
-        public abstract object RequestBody { get; set; }
+        public override HttpMethod Method => HttpMethod.Put;
 
         /// <inheritdoc />
-        public override HttpMethod Method => HttpMethod.Put;
+        public abstract object RequestBody { get; set; }
 
         /// <inheritdoc />
         protected override void ValidateCore(RequestValidationBuilder builder)

@@ -7,19 +7,12 @@
 namespace Pentagon.Extensions.WebApi.Responses
 {
     using System;
-    using System.Diagnostics;
-    using System.Linq;
     using System.Net;
-    using System.Net.Http.Headers;
-    using Interfaces;
 
     public class NoContentResponse<THeaders> : IHeadResponse<THeaders>
             where THeaders : IApiResponseHeaders
     {
-        public NoContentResponse()
-        {
-            
-        }
+        public NoContentResponse() { }
 
         internal NoContentResponse(IHeadResponse<THeaders> toCopy)
         {
@@ -29,9 +22,7 @@ namespace Pentagon.Extensions.WebApi.Responses
             ReasonPhrase = toCopy.ReasonPhrase;
 
             if (toCopy.Headers is THeaders head)
-            {
                 Headers = head;
-            }
             else
             {
                 var h = Activator.CreateInstance<THeaders>();
@@ -56,9 +47,9 @@ namespace Pentagon.Extensions.WebApi.Responses
         public string ReasonPhrase { get; set; }
 
         /// <inheritdoc />
-        public THeaders Headers { get; set; }
+        public string Content { get; set; }
 
         /// <inheritdoc />
-        public string Content { get; set; }
+        public THeaders Headers { get; set; }
     }
 }

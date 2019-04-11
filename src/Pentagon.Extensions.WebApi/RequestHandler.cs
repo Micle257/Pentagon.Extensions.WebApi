@@ -8,7 +8,6 @@ namespace Pentagon.Extensions.WebApi
 {
     using System;
     using System.Collections.Generic;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading;
@@ -18,7 +17,7 @@ namespace Pentagon.Extensions.WebApi
     using JetBrains.Annotations;
     using Requests;
     using Responses;
-    
+
     public abstract class RequestHandler : IRequestHandler
     {
         HttpClient _httpClient;
@@ -63,7 +62,7 @@ namespace Pentagon.Extensions.WebApi
 
             return QueryPagedList<TContent, THeaders>(msg, cancellationToken);
         }
-        
+
         /// <summary> Sets the default request headers for <see cref="HttpClient" /> which defines content type, client id and api version headers. </summary>
         /// <param name="httpClient"> The HTTP client. </param>
         protected virtual void SetDefaultRequestHeaders(HttpClient httpClient)
@@ -74,13 +73,19 @@ namespace Pentagon.Extensions.WebApi
                 httpClient.DefaultRequestHeaders.Accept.Add(appHeader);
         }
 
+        protected virtual ApiException HandleResponseStatusCode<THeaders>(IHeadResponse<THeaders> responseMessage, IRequestMessage requestMessage)
+                where THeaders : IApiResponseHeaders => null;
+
         protected abstract IRequestMessage BuildMessage(IRequest request);
-        
+
+        protected abstract THeaders BuildHeadersCore<THeaders>(HttpResponseHeaders httpHeaders)
+                where THeaders : IApiResponseHeaders;
+
         async Task<IHeadResponse<THeaders>> QueryAsync<TResponse, THeaders>([NotNull] IRequestMessage requestMessage,
-                                                    [NotNull] Func<HttpResponseMessage, string ,TResponse> res,
-                                                    CancellationToken cancellationToken = default)
-            where TResponse : IHeadResponse<THeaders>
-            where THeaders : IApiResponseHeaders
+                                                                            [NotNull] Func<HttpResponseMessage, string, TResponse> res,
+                                                                            CancellationToken cancellationToken = default)
+                where TResponse : IHeadResponse<THeaders>
+                where THeaders : IApiResponseHeaders
         {
             if (requestMessage == null)
                 throw new ArgumentNullException(nameof(requestMessage));
@@ -89,7 +94,7 @@ namespace Pentagon.Extensions.WebApi
                 throw new ArgumentNullException(nameof(res));
 
             var responseMessage = default(HttpResponseMessage);
-            
+
             try
             {
                 responseMessage = await ExecuteRequest(requestMessage, cancellationToken).ConfigureAwait(false);
@@ -97,7 +102,7 @@ namespace Pentagon.Extensions.WebApi
                 var responseContent = await GetResponseContent(responseMessage).ConfigureAwait(false);
 
                 var response = res(responseMessage, responseContent);
-                
+
                 response.ReasonPhrase = responseMessage.ReasonPhrase;
                 response.StatusCode = responseMessage.StatusCode;
                 response.Content = responseContent;
@@ -120,7 +125,7 @@ namespace Pentagon.Extensions.WebApi
                 var response = new NoContentResponse<THeaders>
                                {
                                        IsSuccessful = false
-                };
+                               };
 
                 response.Exception = new ApiException(new ApiExceptionArguments(requestMessage, response), message: "Error while executing request.", exception);
 
@@ -130,7 +135,7 @@ namespace Pentagon.Extensions.WebApi
                     response.StatusCode = responseMessage.StatusCode;
                     response.Headers = BuildHeaders<THeaders>(responseMessage.Headers);
                 }
-                
+
                 return response;
             }
             finally
@@ -139,9 +144,6 @@ namespace Pentagon.Extensions.WebApi
             }
         }
 
-        protected virtual ApiException HandleResponseStatusCode<THeaders>(IHeadResponse<THeaders> responseMessage, IRequestMessage requestMessage)
-                where THeaders : IApiResponseHeaders => null;
-        
         THeaders BuildHeaders<THeaders>(HttpResponseHeaders headers)
                 where THeaders : IApiResponseHeaders
         {
@@ -149,9 +151,6 @@ namespace Pentagon.Extensions.WebApi
 
             return head;
         }
-
-        protected abstract THeaders BuildHeadersCore<THeaders>(HttpResponseHeaders httpHeaders)
-                where THeaders : IApiResponseHeaders;
 
         /// <summary> Executes the query for single item with <see cref="TraktRequestMessage" />. </summary>
         /// <typeparam name="T"> Type of content object. </typeparam>
@@ -163,20 +162,20 @@ namespace Pentagon.Extensions.WebApi
                 where THeaders : IApiResponseHeaders
         {
             var result = await QueryAsync<IResponse<T, THeaders>, THeaders>(requestMessage,
-                             (message, content) =>
-                             {
-                                 var objectContent = JsonHelpers.Deserialize<T>(content);
-                                 var hasValue = !Equals(objectContent, default(T));
+                                                                            (message, content) =>
+                                                                            {
+                                                                                var objectContent = JsonHelpers.Deserialize<T>(content);
+                                                                                var hasValue = !Equals(objectContent, default(T));
 
-                                 var response = new ApiResponse<T, THeaders>
-                                                {
-                                                        HasValue = hasValue,
-                                                        Value = objectContent
-                                                };
+                                                                                var response = new ApiResponse<T, THeaders>
+                                                                                               {
+                                                                                                       HasValue = hasValue,
+                                                                                                       Value = objectContent
+                                                                                               };
 
-                                 return response;
-                             },
-                             cancellationToken);
+                                                                                return response;
+                                                                            },
+                                                                            cancellationToken);
 
             if (result is IResponse<T, THeaders> res)
                 return res;
@@ -188,19 +187,19 @@ namespace Pentagon.Extensions.WebApi
                 where THeaders : IApiResponseHeaders
         {
             var result = await QueryAsync<IListResponse<TContent, THeaders>, THeaders>(requestMessage,
-                                          (message, content) =>
-                                          {
-                                              var contentObject = JsonHelpers.Deserialize<IEnumerable<TContent>>(content);
+                                                                                       (message, content) =>
+                                                                                       {
+                                                                                           var contentObject = JsonHelpers.Deserialize<IEnumerable<TContent>>(content);
 
-                                              var response = new ListApiResponse<TContent, THeaders>
-                                                             {
-                                                                     HasValue = contentObject != null,
-                                                                     Value = contentObject
-                                                             };
+                                                                                           var response = new ListApiResponse<TContent, THeaders>
+                                                                                                          {
+                                                                                                                  HasValue = contentObject != null,
+                                                                                                                  Value = contentObject
+                                                                                                          };
 
-                                              return response;
-                                          },
-                                          cancellationToken);
+                                                                                           return response;
+                                                                                       },
+                                                                                       cancellationToken);
 
             if (result is IListResponse<TContent, THeaders> res)
                 return res;
@@ -212,19 +211,19 @@ namespace Pentagon.Extensions.WebApi
                 where THeaders : IApiResponseHeaders
         {
             var result = await QueryAsync<IPagedResponse<TContent, THeaders>, THeaders>(requestMessage,
-                                          (message, content) =>
-                                          {
-                                              var contentObject = JsonHelpers.Deserialize<IEnumerable<TContent>>(content);
+                                                                                        (message, content) =>
+                                                                                        {
+                                                                                            var contentObject = JsonHelpers.Deserialize<IEnumerable<TContent>>(content);
 
-                                              var response = new PagedApiResponse<TContent, THeaders>
-                                                             {
-                                                                     HasValue = contentObject != null,
-                                                                     Value = contentObject
-                                                             };
+                                                                                            var response = new PagedApiResponse<TContent, THeaders>
+                                                                                                           {
+                                                                                                                   HasValue = contentObject != null,
+                                                                                                                   Value = contentObject
+                                                                                                           };
 
-                                              return response;
-                                          },
-                                          cancellationToken);
+                                                                                            return response;
+                                                                                        },
+                                                                                        cancellationToken);
 
             if (result is IPagedResponse<TContent, THeaders> res)
                 return res;

@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------
-//  <copyright file="IHasRequestBody.cs">
+//  <copyright file="IRequestWithBody.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------

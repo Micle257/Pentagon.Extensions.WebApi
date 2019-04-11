@@ -6,10 +6,6 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    using System.Net.Http.Headers;
-
     public interface IResponse<out TContent, THeaders> : IHeadResponse<THeaders>, IContentResponse<TContent>
-            where THeaders : IApiResponseHeaders
-    {
-    }
+            where THeaders : IApiResponseHeaders { }
 }

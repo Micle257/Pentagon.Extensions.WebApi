@@ -6,15 +6,10 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    using System.Net.Http.Headers;
-
     public class ApiResponse<TContent, THeaders> : NoContentResponse<THeaders>, IResponse<TContent, THeaders>
             where THeaders : IApiResponseHeaders
     {
-        public ApiResponse()
-        {
-            
-        }
+        public ApiResponse() { }
 
         internal ApiResponse(IHeadResponse<THeaders> response) : base(response)
         {

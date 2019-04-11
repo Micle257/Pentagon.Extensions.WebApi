@@ -7,7 +7,6 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System;
-    using Responses;
 
     public class ApiException : Exception
     {

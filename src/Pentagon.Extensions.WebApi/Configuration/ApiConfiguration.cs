@@ -10,10 +10,8 @@ namespace Pentagon.Extensions.WebApi.Configuration
     using JetBrains.Annotations;
     using Microsoft.Extensions.Options;
 
-    /// <summary>
-    /// Represents a wrapper around <see cref="IOptions{TOptions}"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of the options.</typeparam>
+    /// <summary> Represents a wrapper around <see cref="IOptions{TOptions}" />. </summary>
+    /// <typeparam name="T"> The type of the options. </typeparam>
     public class ApiConfiguration<T> : IApiConfiguration
             where T : class, IApiConfiguration, new()
     {

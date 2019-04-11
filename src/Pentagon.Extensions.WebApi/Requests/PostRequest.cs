@@ -10,18 +10,11 @@ namespace Pentagon.Extensions.WebApi.Requests
     using System.Net.Http;
     using Interfaces;
 
-    public abstract class PostRequest<TContent,TRequestBody> : Request<TContent>, IRequestWithBody<TRequestBody>
+    public abstract class PostRequest<TContent, TRequestBody> : Request<TContent>, IRequestWithBody<TRequestBody>
             where TRequestBody : class
     {
         /// <inheritdoc />
         public override HttpMethod Method => HttpMethod.Post;
-
-        /// <inheritdoc />
-        protected override void ValidateCore(RequestValidationBuilder builder)
-        {
-            if (RequestBody == null)
-                builder.AddError(new ArgumentNullException(nameof(RequestBody)));
-        }
 
         /// <inheritdoc />
         public TRequestBody RequestBody { get; set; }
@@ -31,6 +24,13 @@ namespace Pentagon.Extensions.WebApi.Requests
         {
             get => RequestBody;
             set => RequestBody = (TRequestBody) value;
+        }
+
+        /// <inheritdoc />
+        protected override void ValidateCore(RequestValidationBuilder builder)
+        {
+            if (RequestBody == null)
+                builder.AddError(new ArgumentNullException(nameof(RequestBody)));
         }
     }
 }

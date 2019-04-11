@@ -14,7 +14,7 @@ namespace Pentagon.Extensions.WebApi.Requests
     public class RequestValidationResult
     {
         [NotNull]
-        List<Exception> _errors = new List<Exception>();
+        readonly List<Exception> _errors = new List<Exception>();
 
         [NotNull]
         public IEnumerable<Exception> Errors => _errors;

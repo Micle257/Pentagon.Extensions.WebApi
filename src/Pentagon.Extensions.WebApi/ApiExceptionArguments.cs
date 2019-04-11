@@ -7,16 +7,11 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System.Net;
-    using System.Net.Http;
     using Interfaces;
     using Responses;
 
     public class ApiExceptionArguments
     {
-        public IRequestMessage RequestMessage { get; }
-
-        public IBasicResponse ResponseMessage { get; }
-
         /// <inheritdoc />
         public ApiExceptionArguments(IRequestMessage requestMessage, IBasicResponse responseMessage)
         {
@@ -25,6 +20,9 @@ namespace Pentagon.Extensions.WebApi
         }
 
         public ApiExceptionArguments() { }
+        public IRequestMessage RequestMessage { get; }
+
+        public IBasicResponse ResponseMessage { get; }
 
         /// <summary> Returns the response's status code. </summary>
         public HttpStatusCode? StatusCode => ResponseMessage?.StatusCode;

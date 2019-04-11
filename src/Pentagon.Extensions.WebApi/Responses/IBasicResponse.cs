@@ -1,16 +1,13 @@
 // -----------------------------------------------------------------------
-//  <copyright file="INoContentResponse.cs">
+//  <copyright file="IBasicResponse.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    using System;
     using System.Net;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    
+
     public interface IBasicResponse
     {
         bool IsSuccessful { get; set; }

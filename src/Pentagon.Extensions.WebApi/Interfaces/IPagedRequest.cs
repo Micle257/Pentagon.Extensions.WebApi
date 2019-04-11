@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------
-//  <copyright file="ISupportsPagination.cs">
+//  <copyright file="IPagedRequest.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------

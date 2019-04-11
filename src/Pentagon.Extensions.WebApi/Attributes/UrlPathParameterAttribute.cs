@@ -1,13 +1,20 @@
-﻿namespace Pentagon.Extensions.WebApi.Attributes {
+﻿// -----------------------------------------------------------------------
+//  <copyright file="UrlPathParameterAttribute.cs">
+//   Copyright (c) Michal Pokorný. All Rights Reserved.
+//  </copyright>
+// -----------------------------------------------------------------------
+
+namespace Pentagon.Extensions.WebApi.Attributes
+{
     using System;
 
     public class UrlPathParameterAttribute : Attribute
     {
-        public string Name { get; set; }
-
         public UrlPathParameterAttribute(string name)
         {
             Name = name;
         }
+
+        public string Name { get; set; }
     }
 }

@@ -1,4 +1,11 @@
-namespace Pentagon.Extensions.WebApi {
+// -----------------------------------------------------------------------
+//  <copyright file="IRequestMessageBuilder.cs">
+//   Copyright (c) Michal Pokorný. All Rights Reserved.
+//  </copyright>
+// -----------------------------------------------------------------------
+
+namespace Pentagon.Extensions.WebApi
+{
     using System;
     using Interfaces;
     using Requests;
