@@ -13,7 +13,6 @@ namespace Pentagon.Extensions.WebApi
     using System.Net.Http.Headers;
     using System.Threading;
     using System.Threading.Tasks;
-    using Abstractions;
     using Interfaces;
     using IO.Json;
     using JetBrains.Annotations;

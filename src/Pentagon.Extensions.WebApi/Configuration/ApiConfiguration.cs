@@ -4,10 +4,10 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Configuration
 {
     using System;
-    using Abstractions;using JetBrains.Annotations;
+    using JetBrains.Annotations;
     using Microsoft.Extensions.Options;
 
     /// <summary>

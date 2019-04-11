@@ -13,6 +13,7 @@ namespace Pentagon.Extensions.WebApi.Requests
     using System.Net.Http;
     using System.Reflection;
     using System.Web;
+    using Attributes;
 
     public abstract class Request<T> : IRequest<T>
     {

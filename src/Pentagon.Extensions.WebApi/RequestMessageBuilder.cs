@@ -15,15 +15,6 @@ namespace Pentagon.Extensions.WebApi
     using Requests;
     using Tavis.UriTemplates;
 
-    public interface IRequestMessageBuilder
-    {
-        IRequestMessageBuilder AddBaseUrl(Uri uri);
-
-        IRequestMessageBuilder AddRequest(IRequest request);
-
-        IRequestMessage Build();
-    }
-
     public class RequestMessageBuilder : IRequestMessageBuilder
     {
         object _requestBody;

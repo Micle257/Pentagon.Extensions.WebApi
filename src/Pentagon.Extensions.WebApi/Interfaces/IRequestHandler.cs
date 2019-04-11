@@ -4,11 +4,10 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Interfaces
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Interfaces;
     using Requests;
     using Responses;
 

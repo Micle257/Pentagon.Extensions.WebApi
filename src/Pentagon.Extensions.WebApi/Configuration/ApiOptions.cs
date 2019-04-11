@@ -4,10 +4,9 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Configuration
 {
     using System;
-    using Abstractions;
 
     public class ApiOptions : IApiConfiguration
     {

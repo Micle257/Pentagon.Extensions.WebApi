@@ -4,7 +4,7 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi
+namespace Pentagon.Extensions.WebApi.Attributes
 {
     using System;
 
@@ -13,26 +13,6 @@ namespace Pentagon.Extensions.WebApi
         public string Name { get; set; }
 
         public UrlQueryParameterAttribute(string name)
-        {
-            Name = name;
-        }
-    }
-
-    public class UrlPathParameterAttribute : Attribute
-    {
-        public string Name { get; set; }
-
-        public UrlPathParameterAttribute(string name)
-        {
-            Name = name;
-        }
-    }
-
-    public class ResponseHeaderAttribute : Attribute
-    {
-        public string Name { get; set; }
-
-        public ResponseHeaderAttribute(string name)
         {
             Name = name;
         }
