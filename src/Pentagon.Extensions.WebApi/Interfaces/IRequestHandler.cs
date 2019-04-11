@@ -19,11 +19,13 @@ namespace Pentagon.Extensions.WebApi.Abstractions
         /// <param name="request"> The execute request. </param>
         /// <param name="cancellationToken"> The <see cref="CancellationToken" /> to observe while waiting for the task to complete. </param>
         /// <returns> <see cref="TraktResponse{TContent}" /> instance with response information. </returns>
-        Task<IResponse<T>> ExecuteSingleItemRequest<T>(IRequest<T> request, CancellationToken cancellationToken = default);
-        
-        Task<IListResponse<TContent>> ExecuteListRequestAsync<TContent>(IRequest<TContent> request, CancellationToken cancellationToken = default);
+        Task<IResponse<T, THeaders>> ExecuteSingleItemRequest<T, THeaders>(IRequest<T> request, CancellationToken cancellationToken = default)
+                where THeaders : IApiResponseHeaders;
 
-        Task<IPagedResponse<TContent>> ExecutePagedRequest<TContent, TRequest>(TRequest request, CancellationToken cancellationToken = default)
-                where TRequest : IRequest<TContent>, ISupportsPagination;
+        Task<IListResponse<TContent, THeaders>> ExecuteListRequestAsync<TContent, THeaders>(IRequest<TContent> request, CancellationToken cancellationToken = default)
+                where THeaders : IApiResponseHeaders;
+
+        Task<IPagedResponse<TContent, THeaders>> ExecutePagedRequest<TContent, THeaders>(IRequest<TContent> request, CancellationToken cancellationToken = default)
+                where THeaders : IApiResponseHeaders;
     }
 }

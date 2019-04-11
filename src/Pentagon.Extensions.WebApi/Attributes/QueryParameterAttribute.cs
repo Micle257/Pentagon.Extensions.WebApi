@@ -8,7 +8,7 @@ namespace Pentagon.Extensions.WebApi
 {
     using System;
 
-    class UrlQueryParameterAttribute : Attribute
+    public class UrlQueryParameterAttribute : Attribute
     {
         public string Name { get; set; }
 
@@ -18,11 +18,21 @@ namespace Pentagon.Extensions.WebApi
         }
     }
 
-    class UrlPathParameterAttribute : Attribute
+    public class UrlPathParameterAttribute : Attribute
     {
         public string Name { get; set; }
 
         public UrlPathParameterAttribute(string name)
+        {
+            Name = name;
+        }
+    }
+
+    public class ResponseHeaderAttribute : Attribute
+    {
+        public string Name { get; set; }
+
+        public ResponseHeaderAttribute(string name)
         {
             Name = name;
         }

@@ -1,19 +1,15 @@
 // -----------------------------------------------------------------------
-//  <copyright file="IPagedResponseHeaders.cs">
+//  <copyright file="ISupportsPagination.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
 namespace Pentagon.Extensions.WebApi.Interfaces
 {
-    public interface IPagedResponseHeaders
+    public interface IPagedRequest
     {
         int? Page { get; set; }
 
         int? Limit { get; set; }
-
-        int? PageCount { get; set; }
-
-        int? ItemCount { get; set; }
     }
 }

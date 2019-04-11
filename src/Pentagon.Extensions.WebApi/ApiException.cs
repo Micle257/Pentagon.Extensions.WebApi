@@ -7,6 +7,7 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System;
+    using Responses;
 
     public class ApiException : Exception
     {
@@ -14,7 +15,17 @@ namespace Pentagon.Extensions.WebApi
         {
             Arguments = arguments;
         }
-        
+
+        public ApiException(ApiExceptionArguments arguments, string message) : base(message)
+        {
+            Arguments = arguments;
+        }
+
+        public ApiException(ApiExceptionArguments arguments)
+        {
+            Arguments = arguments;
+        }
+
         public ApiExceptionArguments Arguments { get; }
     }
 }

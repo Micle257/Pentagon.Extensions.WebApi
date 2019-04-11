@@ -11,6 +11,7 @@ namespace Pentagon.Extensions.WebApi.Requests
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
+    using System.Reflection;
     using System.Web;
 
     public abstract class Request<T> : IRequest<T>
@@ -20,27 +21,7 @@ namespace Pentagon.Extensions.WebApi.Requests
 
         /// <inheritdoc />
         public abstract string UriTemplate { get; }
-
-        public string UriTemplateParameters
-        {
-            get
-            {
-                var uriPath = GetUrlQueryParameters();
-
-                if (uriPath?.Any() == false)
-                    return UriTemplate;
-
-                var parms = uriPath.Keys.Aggregate((a, b) => $"{a},{b}");
-
-                var url = HttpUtility.HtmlEncode(parms).Replace(oldValue: "-", newValue: "%2D");
-
-                if (!string.IsNullOrEmpty(url))
-                    return UriTemplate + $"{{?{url}}}";
-
-                return UriTemplate;
-            }
-        }
-
+        
         /// <inheritdoc />
         public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(1);
 
@@ -55,13 +36,44 @@ namespace Pentagon.Extensions.WebApi.Requests
         }
 
         /// <inheritdoc />
-        public IDictionary<string, object> GetUrlParameters() => GetUrlPathParameters().Concat(GetUrlQueryParameters()).ToDictionary(a => a.Key, a => a.Value);
+        public IDictionary<string, object> GetUrlQueryParameters()
+        {
+            var result = new Dictionary<string, object>();
+
+            var properties = GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                var attribute = property.GetCustomAttribute<UrlQueryParameterAttribute>(true);
+
+                var value = property.GetValue(this);
+
+                if (!string.IsNullOrWhiteSpace(attribute?.Name))
+                    result.Add(attribute.Name, value);
+            }
+
+            return result;
+        }
 
         /// <inheritdoc />
-        protected virtual IDictionary<string, object> GetUrlQueryParameters() => new ConcurrentDictionary<string, object>();
+        public IDictionary<string, object> GetUrlPathParameters()
+        {
+            var result = new Dictionary<string,object>();
 
-        /// <inheritdoc />
-        protected virtual IDictionary<string, object> GetUrlPathParameters() => new ConcurrentDictionary<string, object>();
+            var properties = GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                var attribute =  property.GetCustomAttribute<UrlPathParameterAttribute>(true);
+
+                var value = property.GetValue(this);
+
+                if (!string.IsNullOrWhiteSpace(attribute?.Name))
+                    result.Add(attribute.Name, value);
+            }
+
+            return result;
+        }
 
         protected virtual void ValidateCore(RequestValidationBuilder builder) { }
     }

@@ -10,10 +10,10 @@ namespace Pentagon.Extensions.WebApi.Responses
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
-
-    public interface IResponse
+    
+    public interface IBasicResponse
     {
-        bool IsSuccess { get; set; }
+        bool IsSuccessful { get; set; }
 
         ApiException Exception { get; set; }
 
@@ -21,8 +21,19 @@ namespace Pentagon.Extensions.WebApi.Responses
 
         string ReasonPhrase { get; set; }
 
-        HttpResponseHeaders Headers { get; set; }
-        
-        string RawContent { get; set; }
+        string Content { get; set; }
+    }
+
+    public interface IHeadResponse<THeaders> : IBasicResponse
+        where THeaders : IApiResponseHeaders
+    {
+        THeaders Headers { get; set; }
+    }
+
+    public interface IContentResponse<out TContent> : IBasicResponse
+    {
+        bool HasValue { get; }
+
+        TContent Value { get; }
     }
 }

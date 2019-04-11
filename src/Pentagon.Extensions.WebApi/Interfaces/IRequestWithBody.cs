@@ -1,15 +1,18 @@
 // -----------------------------------------------------------------------
-//  <copyright file="ISupportsPagination.cs">
+//  <copyright file="IHasRequestBody.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
 namespace Pentagon.Extensions.WebApi.Interfaces
 {
-    public interface ISupportsPagination
+    public interface IRequestWithBody
     {
-        int? Page { get; set; }
+        object RequestBody { get; set; }
+    }
 
-        int? Limit { get; set; }
+    public interface IRequestWithBody<T> : IRequestWithBody
+    {
+        new T RequestBody { get; set; }
     }
 }

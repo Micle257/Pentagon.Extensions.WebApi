@@ -7,6 +7,7 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Text;
     using Interfaces;
@@ -28,7 +29,7 @@ namespace Pentagon.Extensions.WebApi
         object _requestBody;
 
         protected IRequest Request { get; private set; }
-
+        
         protected Uri BaseUrl { get; private set; }
 
         public IRequestMessageBuilder AddBaseUrl(Uri uri)
@@ -41,12 +42,21 @@ namespace Pentagon.Extensions.WebApi
         {
             Request = request;
 
-            if (request is IHasRequestBody body)
+            if (request is IRequestWithBody body)
                 _requestBody = body.RequestBody;
 
             return this;
         }
-        
+
+        protected virtual IDictionary<string,object> GetUrlQueryParameters()
+        {
+            var requestQueryParameters = Request.GetUrlQueryParameters();
+
+            return requestQueryParameters;
+        }
+
+        protected virtual string GetUrlTemplate() => Request.UriTemplate;
+
         public IRequestMessage Build()
         {
             var url = BuildUrl();
@@ -90,10 +100,18 @@ namespace Pentagon.Extensions.WebApi
         /// <returns> <see cref="Uri" /> instance of request. </returns>
         Uri BuildUrl()
         {
-            var uriTemplate = new UriTemplate(Request.UriTemplateParameters);
-            var pathParameters = Request.GetUrlParameters();
+            var urlTemplateText = GetUrlTemplate();
+
+            var uriTemplate = new UriTemplate(urlTemplateText);
+
+            var pathParameters = Request.GetUrlPathParameters();
 
             foreach (var pair in pathParameters)
+                uriTemplate.AddParameter(pair.Key, pair.Value);
+
+            var queryParameters = GetUrlQueryParameters();
+
+            foreach (var pair in queryParameters)
                 uriTemplate.AddParameter(pair.Key, pair.Value);
 
             var uri = uriTemplate.Resolve();

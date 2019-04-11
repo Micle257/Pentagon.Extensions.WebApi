@@ -8,10 +8,8 @@ namespace Pentagon.Extensions.WebApi.Responses
 {
     using System.Net.Http.Headers;
 
-    public interface IResponse<out TContent> : IResponse
+    public interface IResponse<out TContent, THeaders> : IHeadResponse<THeaders>, IContentResponse<TContent>
+            where THeaders : IApiResponseHeaders
     {
-        bool HasValue { get; }
-
-        TContent Value { get; }
     }
 }

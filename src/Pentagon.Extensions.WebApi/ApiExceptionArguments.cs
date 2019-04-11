@@ -6,27 +6,36 @@
 
 namespace Pentagon.Extensions.WebApi
 {
+    using System.Net;
+    using System.Net.Http;
+    using Interfaces;
     using Responses;
 
     public class ApiExceptionArguments
     {
+        public IRequestMessage RequestMessage { get; }
+
+        public IBasicResponse ResponseMessage { get; }
+
         /// <inheritdoc />
-        public ApiExceptionArguments(string requestUrl, string requestBody, IResponse response)
+        public ApiExceptionArguments(IRequestMessage requestMessage, IBasicResponse responseMessage)
         {
-            RequestUrl = requestUrl;
-            RequestBody = requestBody;
-            Response = response;
+            RequestMessage = requestMessage;
+            ResponseMessage = responseMessage;
         }
 
         public ApiExceptionArguments() { }
 
+        /// <summary> Returns the response's status code. </summary>
+        public HttpStatusCode? StatusCode => ResponseMessage?.StatusCode;
+
         /// <summary> Gets or sets the request url. </summary>
-        public string RequestUrl { get; set; }
+        public string RequestUrl => RequestMessage?.Url;
 
         /// <summary> Gets or sets the request body. </summary>
-        public string RequestBody { get; set; }
+        public string RequestBody => RequestMessage?.RequestBodyJson;
 
-        /// <summary> Gets or sets the response content. </summary>
-        public IResponse Response { get; set; }
+        /// <summary> Gets or sets the server reason phrase. </summary>
+        public string ServerReasonPhrase => ResponseMessage?.ReasonPhrase;
     }
 }

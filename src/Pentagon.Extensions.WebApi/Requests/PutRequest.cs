@@ -10,7 +10,7 @@ namespace Pentagon.Extensions.WebApi.Requests
     using System.Net.Http;
     using Interfaces;
 
-    public abstract class PutRequest<T> : Request<T>, IHasRequestBody
+    public abstract class PutRequest<T> : Request<T>, IRequestWithBody
     {
         /// <inheritdoc />
         public abstract object RequestBody { get; set; }

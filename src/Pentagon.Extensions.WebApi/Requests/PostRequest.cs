@@ -10,7 +10,7 @@ namespace Pentagon.Extensions.WebApi.Requests
     using System.Net.Http;
     using Interfaces;
 
-    public abstract class PostRequest<TContent,TRequestBody> : Request<TContent>, IHasRequestBody<TRequestBody>
+    public abstract class PostRequest<TContent,TRequestBody> : Request<TContent>, IRequestWithBody<TRequestBody>
             where TRequestBody : class
     {
         /// <inheritdoc />
@@ -27,7 +27,7 @@ namespace Pentagon.Extensions.WebApi.Requests
         public TRequestBody RequestBody { get; set; }
 
         /// <inheritdoc />
-        object IHasRequestBody.RequestBody
+        object IRequestWithBody.RequestBody
         {
             get => RequestBody;
             set => RequestBody = (TRequestBody) value;

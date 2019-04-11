@@ -13,10 +13,10 @@ namespace Pentagon.Extensions.WebApi.Requests
     public interface IRequest : IHttpRequest
     {
         string UriTemplate { get; }
-
-        string UriTemplateParameters { get; }
         
-        IDictionary<string, object> GetUrlParameters();
+        IDictionary<string, object> GetUrlPathParameters();
+
+        IDictionary<string, object> GetUrlQueryParameters();
 
         RequestValidationResult Validate();
     }
