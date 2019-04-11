@@ -8,9 +8,9 @@
     <Description>Class library providing common logic for Web APIs.</Description>
     <Copyright>Copyright (c) Michal Pokorný. All Rights Reserved.</Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.2.0</Version>
     <PackageProjectUrl>https://github.com/Micle257/Pentagon.Extensions.WebApi</PackageProjectUrl>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -23,10 +23,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="Pentagon.Extensions.IO.Json" Version="1.0.0" />
-    <PackageReference Include="Tavis.UriTemplates" Version="1.1.1" />
+    <PackageReference Include="FluentValidation" Version="8.2.2" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" PrivateAssets="All" />
+    <PackageReference Include="Pentagon.Common" Version="1.6.4" />
+    <PackageReference Include="Pentagon.Extensions.IO.Json" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Tavis.UriTemplates" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

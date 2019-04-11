@@ -4,7 +4,8 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IPagedResponse<TContent> : IListResponse<TContent>, IPagedResponseHeaders { }
+    public interface IPagedResponse<out TContent, THeaders> : IListResponse<TContent, THeaders>
+            where THeaders : IApiResponseHeaders { }
 }

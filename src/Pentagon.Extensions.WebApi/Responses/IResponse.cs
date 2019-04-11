@@ -4,11 +4,8 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IResponse<TContent> : INoContentResponse
-    {
-        bool HasValue { get; }
-        TContent Value { get; }
-    }
+    public interface IResponse<out TContent, THeaders> : IHeadResponse<THeaders>, IContentResponse<TContent>
+            where THeaders : IApiResponseHeaders { }
 }

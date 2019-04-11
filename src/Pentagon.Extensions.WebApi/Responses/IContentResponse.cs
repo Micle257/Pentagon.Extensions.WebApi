@@ -1,17 +1,15 @@
 // -----------------------------------------------------------------------
-//  <copyright file="INoContentResponse.cs">
+//  <copyright file="IContentResponse.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Responses
 {
-    using System;
-
-    public interface INoContentResponse
+    public interface IContentResponse<out TContent> : IBasicResponse
     {
-        bool IsSuccess { get; }
+        bool HasValue { get; }
 
-        Exception Exception { get; }
+        TContent Value { get; }
     }
 }

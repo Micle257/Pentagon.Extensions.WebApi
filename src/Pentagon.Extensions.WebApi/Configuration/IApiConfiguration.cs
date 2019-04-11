@@ -1,10 +1,17 @@
 ﻿// -----------------------------------------------------------------------
-//  <copyright file="IRequest'1.cs">
+//  <copyright file="IApiConfiguration.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Configuration
 {
-    public interface IRequest<T> : IRequest { }
+    using System;
+
+    public interface IApiConfiguration
+    {
+        int ApiVersion { get; }
+
+        Uri BaseUrl { get; }
+    }
 }

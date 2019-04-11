@@ -7,68 +7,70 @@
 namespace Pentagon.Extensions.WebApi
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Text;
-    using Abstractions;
+    using Interfaces;
+    using IO.Json;
+    using Requests;
     using Tavis.UriTemplates;
-    using Utilities.Data.Json;
 
-    public abstract class RequestMessageBuilder : IRequestMessageBuilder
+    public class RequestMessageBuilder : IRequestMessageBuilder
     {
-        readonly IApiConfiguration _configuration;
-
         object _requestBody;
-
-        public RequestMessageBuilder(IApiConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        public IRequestMessage RequestMessage { get; protected set; }
 
         protected IRequest Request { get; private set; }
 
-        public IRequestMessageBuilder WithRequest(IRequest request)
+        protected Uri BaseUrl { get; private set; }
+
+        public IRequestMessageBuilder AddBaseUrl(Uri uri)
+        {
+            BaseUrl = uri;
+            return this;
+        }
+
+        public IRequestMessageBuilder AddRequest(IRequest request)
         {
             Request = request;
-            return this;
-        }
 
-        public IRequestMessageBuilder WithPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request)
-        {
-            Request = request as IRequest;
-            _requestBody = request.RequestBody;
-            return this;
-        }
-
-        public IRequestMessageBuilder BuildRequestMessage()
-        {
-            CreateRequestMessage();
-            SetRequestMessageHeadersForAuthorization();
-
-            if (_requestBody != null)
-                AddBodyContent();
+            if (request is IRequestWithBody body)
+                _requestBody = body.RequestBody;
 
             return this;
         }
 
-        protected virtual IRequestMessage CreateRequestMessage()
+        public IRequestMessage Build()
         {
             var url = BuildUrl();
-            RequestMessage = new RequestMessage(Request.Method, url) {Url = url.AbsoluteUri};
 
-            return RequestMessage;
+            var request = new RequestMessage(Request.Method, url)
+                          {
+                                  Url = url.AbsoluteUri,
+                                  Request = Request
+                          };
+
+            if (_requestBody != null)
+            {
+                var content = GetRequestBodyContent();
+                request.Content = content.httpContent;
+                request.RequestBodyJson = content.jsonContent;
+            }
+
+            request = BuildCore(request);
+
+            return request;
         }
 
-        /// <summary> Sets the request message headers for authorization by given <see cref="AuthorizationRequirement" />. </summary>
-        protected abstract void SetRequestMessageHeadersForAuthorization();
-
-        void AddBodyContent()
+        protected virtual IDictionary<string, object> GetUrlQueryParameters()
         {
-            var content = GetRequestBodyContent();
-            RequestMessage.Content = content.httpContent;
-            RequestMessage.RequestBodyJson = content.jsonContent;
+            var requestQueryParameters = Request.GetUrlQueryParameters();
+
+            return requestQueryParameters;
         }
+
+        protected virtual string GetUrlTemplate() => Request.UriTemplate;
+
+        protected virtual RequestMessage BuildCore(RequestMessage request) => request;
 
         (HttpContent httpContent, string jsonContent) GetRequestBodyContent()
         {
@@ -80,7 +82,7 @@ namespace Pentagon.Extensions.WebApi
             jsonBody = JsonHelpers.Serialize(_requestBody);
 
             if (!string.IsNullOrEmpty(jsonBody))
-                return (new StringContent(jsonBody, Encoding.UTF8, ApiNames.ContentTypes.Json), jsonBody);
+                return (new StringContent(jsonBody, Encoding.UTF8, ContentTypeNames.Json), jsonBody);
 
             return (null, string.Empty);
         }
@@ -89,14 +91,22 @@ namespace Pentagon.Extensions.WebApi
         /// <returns> <see cref="Uri" /> instance of request. </returns>
         Uri BuildUrl()
         {
-            var uriTemplate = new UriTemplate(Request.UriTemplateParameters);
-            var pathParameters = Request.GetUriPathParameters();
+            var urlTemplateText = GetUrlTemplate();
+
+            var uriTemplate = new UriTemplate(urlTemplateText);
+
+            var pathParameters = Request.GetUrlPathParameters();
 
             foreach (var pair in pathParameters)
                 uriTemplate.AddParameter(pair.Key, pair.Value);
 
+            var queryParameters = GetUrlQueryParameters();
+
+            foreach (var pair in queryParameters)
+                uriTemplate.AddParameter(pair.Key, pair.Value);
+
             var uri = uriTemplate.Resolve();
-            return new Uri(_configuration.BaseUrl, uri);
+            return new Uri(BaseUrl, uri);
         }
     }
 }

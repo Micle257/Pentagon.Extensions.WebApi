@@ -6,13 +6,16 @@
 
 namespace Pentagon.Extensions.WebApi
 {
-    using Abstractions;
+    using System;
+    using Interfaces;
+    using Requests;
 
     public interface IRequestMessageBuilder
     {
-        IRequestMessage RequestMessage { get; }
-        IRequestMessageBuilder WithRequest(IRequest request);
-        IRequestMessageBuilder WithPostRequest<TRequestBody>(IHasRequestBody<TRequestBody> request);
-        IRequestMessageBuilder BuildRequestMessage();
+        IRequestMessageBuilder AddBaseUrl(Uri uri);
+
+        IRequestMessageBuilder AddRequest(IRequest request);
+
+        IRequestMessage Build();
     }
 }

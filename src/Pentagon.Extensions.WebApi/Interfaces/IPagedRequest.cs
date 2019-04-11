@@ -1,14 +1,15 @@
 // -----------------------------------------------------------------------
-//  <copyright file="ISupportsPagination.cs">
+//  <copyright file="IPagedRequest.cs">
 //   Copyright (c) Michal Pokorný. All Rights Reserved.
 //  </copyright>
 // -----------------------------------------------------------------------
 
-namespace Pentagon.Extensions.WebApi.Abstractions
+namespace Pentagon.Extensions.WebApi.Interfaces
 {
-    public interface ISupportsPagination
+    public interface IPagedRequest
     {
         int? Page { get; set; }
+
         int? Limit { get; set; }
     }
 }
