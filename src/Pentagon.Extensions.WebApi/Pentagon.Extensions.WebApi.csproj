@@ -25,8 +25,19 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" PrivateAssets="All" />
-    <PackageReference Include="Pentagon.Common" Version="1.6.4" />
     <PackageReference Include="Pentagon.Extensions.IO.Json" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Tavis.UriTemplates" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
+  <Choose>
+    <When Condition="'$(SolutionPath)'=='C:\Users\Michal\Source\Pentagon.All.sln' AND '$(Configuration)'=='Debug'">
+      <ItemGroup>
+        <ProjectReference Include="..\..\..\Pentagon.Common\src\Pentagon.Common\Pentagon.Common.csproj" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="Pentagon.Common" Version="1.6.4" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 </Project>
