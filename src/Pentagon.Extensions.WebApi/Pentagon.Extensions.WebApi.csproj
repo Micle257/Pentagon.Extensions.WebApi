@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Michal Pokorný</Authors>
-    <Company></Company>
+    <Company>
+    </Company>
     <Product>Pentagon.Extensions.WebApi</Product>
     <Description>Class library providing common logic for Web APIs.</Description>
     <Copyright>Copyright (c) Michal Pokorný. All Rights Reserved.</Copyright>
@@ -12,16 +12,13 @@
     <PackageProjectUrl>https://github.com/Micle257/Pentagon.Extensions.WebApi</PackageProjectUrl>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\build\$(AssemblyName)\</OutputPath>
     <DocumentationFile>..\..\build\$(AssemblyName)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\debug\$(AssemblyName)\</OutputPath>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="8.2.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" PrivateAssets="All" />
@@ -32,5 +29,4 @@
     <PackageReference Include="Pentagon.Extensions.IO.Json" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Tavis.UriTemplates" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
-
 </Project>
