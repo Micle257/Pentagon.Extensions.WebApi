@@ -20,7 +20,7 @@
     <OutputPath>..\..\debug\$(AssemblyName)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="8.2.2" />
+    <PackageReference Include="FluentValidation" Version="8.2.3" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" PrivateAssets="All" />
