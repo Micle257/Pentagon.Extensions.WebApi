@@ -9,13 +9,8 @@ namespace Pentagon.Extensions.WebApi.Responses
     using System.Collections;
     using System.Collections.Generic;
 
-    public class ListApiResponse<TContent, THeaders> : ApiResponse<IEnumerable<TContent>, THeaders>, IListResponse<TContent, THeaders>
-            where THeaders : IApiResponseHeaders
+    public class ListApiResponse<TContent> : ApiResponse<IEnumerable<TContent>>, IListResponse<TContent>
     {
-        public ListApiResponse() { }
-
-        internal ListApiResponse(IHeadResponse<THeaders> response) : base(response) { }
-
         /// <inheritdoc />
         public IEnumerator<TContent> GetEnumerator() => Value.GetEnumerator();
 

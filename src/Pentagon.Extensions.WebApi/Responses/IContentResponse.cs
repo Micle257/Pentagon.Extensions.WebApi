@@ -6,10 +6,10 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IContentResponse<out TContent> : IBasicResponse
+    public interface IContentResponse<TContent> : IBasicResponse
     {
-        bool HasValue { get; }
+        bool HasValue { get; set; }
 
-        TContent Value { get; }
+        TContent Value { get; set; }
     }
 }

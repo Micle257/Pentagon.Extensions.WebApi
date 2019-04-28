@@ -6,11 +6,7 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    public class PagedApiResponse<TContent, THeaders> : ListApiResponse<TContent, THeaders>, IPagedResponse<TContent, THeaders>
-            where THeaders : IApiResponseHeaders
+    public class PagedApiResponse<TContent> : ListApiResponse<TContent>, IPagedResponse<TContent>
     {
-        public PagedApiResponse() { }
-
-        internal PagedApiResponse(IHeadResponse<THeaders> response) : base(response) { }
     }
 }

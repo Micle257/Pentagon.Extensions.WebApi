@@ -6,6 +6,5 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IPagedResponse<out TContent, THeaders> : IListResponse<TContent, THeaders>
-            where THeaders : IApiResponseHeaders { }
+    public interface IPagedResponse<out TContent> : IListResponse<TContent> { }
 }

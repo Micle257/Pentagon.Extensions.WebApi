@@ -8,6 +8,5 @@ namespace Pentagon.Extensions.WebApi.Responses
 {
     using System.Collections.Generic;
 
-    public interface IListResponse<out TContent, THeaders> : IResponse<IEnumerable<TContent>, THeaders>, IEnumerable<TContent>
-            where THeaders : IApiResponseHeaders { }
+    public interface IListResponse<out TContent> : IResponse<IEnumerable<TContent>>, IEnumerable<TContent> { }
 }

@@ -6,6 +6,7 @@
 
 namespace Pentagon.Extensions.WebApi.Interfaces
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Requests;
@@ -13,18 +14,10 @@ namespace Pentagon.Extensions.WebApi.Interfaces
 
     public interface IRequestHandler
     {
-        /// <summary> Executes the single item request with no data sending. </summary>
-        /// <typeparam name="T"> Type of content object. </typeparam>
-        /// <param name="request"> The execute request. </param>
-        /// <param name="cancellationToken"> The <see cref="CancellationToken" /> to observe while waiting for the task to complete. </param>
-        /// <returns> <see cref="TraktResponse{TContent}" /> instance with response information. </returns>
-        Task<IResponse<T, THeaders>> ExecuteSingleItemRequest<T, THeaders>(IRequest<T> request, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders;
+        Task<TResponse> ExecuteSingleRequest<TResponse, T>(IRequest<T> request, CancellationToken cancellationToken = default)
+                where TResponse : IResponse<T>, new();
 
-        Task<IListResponse<TContent, THeaders>> ExecuteListRequestAsync<TContent, THeaders>(IRequest<TContent> request, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders;
-
-        Task<IPagedResponse<TContent, THeaders>> ExecutePagedRequest<TContent, THeaders>(IRequest<TContent> request, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders;
+        Task<TResponse> ExecuteManyRequest<TResponse, T>(IRequest<T> request, CancellationToken cancellationToken = default)
+                where TResponse : IListResponse<T>, new();
     }
 }
