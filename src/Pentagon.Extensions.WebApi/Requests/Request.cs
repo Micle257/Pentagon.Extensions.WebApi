@@ -67,7 +67,7 @@ namespace Pentagon.Extensions.WebApi.Requests
                 var value = property.GetValue(this);
 
                 if (!string.IsNullOrWhiteSpace(attribute?.Name))
-                    result.Add(attribute.Name, value);
+                    result.Add(attribute.Name, value.ToString());
             }
 
             return result;

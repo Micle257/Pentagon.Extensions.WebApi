@@ -1,1 +1,0 @@
-sh /c/Users/Michal/Source/GitHub/build.sh Pentagon.Extensions.WebApi Pentagon.Extensions.WebApi

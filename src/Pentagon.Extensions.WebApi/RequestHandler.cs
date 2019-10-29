@@ -22,13 +22,8 @@ namespace Pentagon.Extensions.WebApi
     {
         HttpClient _httpClient;
 
-        /// <summary> Executes the single item request with no data sending. </summary>
-        /// <typeparam name="T"> Type of content object. </typeparam>
-        /// <param name="request"> The execute request. </param>
-        /// <param name="cancellationToken"> The <see cref="CancellationToken" /> to observe while waiting for the task to complete. </param>
-        /// <returns> <see cref="TraktResponse{TContent}" /> instance with response information. </returns>
-        public Task<IResponse<T, THeaders>> ExecuteSingleItemRequest<T, THeaders>(IRequest<T> request, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders
+        public async Task<TResponse> ExecuteSingleRequest<TResponse,T>(IRequest<T> request, CancellationToken cancellationToken = default)
+                where TResponse : IResponse<T>, new()
         {
             Require.ValidateRequest(request);
 
@@ -36,11 +31,16 @@ namespace Pentagon.Extensions.WebApi
 
             var msg = BuildMessage(request);
 
-            return QuerySingleItem<T, THeaders>(msg, cancellationToken);
+            var result = await QueryAsync(msg,
+                                          (message, s) => ApiResponseFactory<TResponse, T>(s),
+                                          cancellationToken).ConfigureAwait(false);
+
+            return result;
         }
 
-        public Task<IListResponse<TContent, THeaders>> ExecuteListRequestAsync<TContent, THeaders>(IRequest<TContent> request, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders
+        /// <inheritdoc />
+        public async Task<TResponse> ExecuteManyRequest<TResponse, T>(IRequest<T> request, CancellationToken cancellationToken = default)
+                where TResponse : IListResponse<T>, new()
         {
             Require.ValidateRequest(request);
 
@@ -48,19 +48,11 @@ namespace Pentagon.Extensions.WebApi
 
             var msg = BuildMessage(request);
 
-            return QueryList<TContent, THeaders>(msg, cancellationToken);
-        }
+            var result = await QueryAsync(msg,
+                                          (message, s) => ApiResponseFactory<TResponse, IEnumerable<T>>(s),
+                                          cancellationToken).ConfigureAwait(false);
 
-        public Task<IPagedResponse<TContent, THeaders>> ExecutePagedRequest<TContent, THeaders>(IRequest<TContent> request, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders
-        {
-            Require.ValidateRequest(request);
-
-            SetupHttpClient();
-
-            var msg = BuildMessage(request);
-
-            return QueryPagedList<TContent, THeaders>(msg, cancellationToken);
+            return result;
         }
 
         /// <summary> Sets the default request headers for <see cref="HttpClient" /> which defines content type, client id and api version headers. </summary>
@@ -73,19 +65,30 @@ namespace Pentagon.Extensions.WebApi
                 httpClient.DefaultRequestHeaders.Accept.Add(appHeader);
         }
 
-        protected virtual ApiException HandleResponseStatusCode<THeaders>(IHeadResponse<THeaders> responseMessage, IRequestMessage requestMessage)
-                where THeaders : IApiResponseHeaders => null;
+        protected virtual ApiException HandleResponseStatusCode(IBasicResponse responseMessage, IRequestMessage requestMessage) => null;
+
+        protected virtual void OnResponseCreated(IBasicResponse response) { }
 
         protected abstract IRequestMessage BuildMessage(IRequest request);
 
-        protected abstract THeaders BuildHeadersCore<THeaders>(HttpResponseHeaders httpHeaders)
-                where THeaders : IApiResponseHeaders;
+        static TResponse ApiResponseFactory<TResponse, T>(string content)
+            where TResponse : IResponse<T>
+        {
+            var objectContent = JsonHelpers.Deserialize<T>(content);
+            var hasValue = !Equals(objectContent, default(T));
 
-        async Task<IHeadResponse<THeaders>> QueryAsync<TResponse, THeaders>([NotNull] IRequestMessage requestMessage,
-                                                                            [NotNull] Func<HttpResponseMessage, string, TResponse> res,
-                                                                            CancellationToken cancellationToken = default)
-                where TResponse : IHeadResponse<THeaders>
-                where THeaders : IApiResponseHeaders
+            var response = Activator.CreateInstance<TResponse>();
+
+            response.HasValue = hasValue;
+            response.Value = objectContent;
+
+            return response;
+        }
+
+        async Task<TResponse> QueryAsync<TResponse>([NotNull] IRequestMessage requestMessage,
+                                                         [NotNull] Func<HttpResponseMessage, string, TResponse> res,
+                                                         CancellationToken cancellationToken = default)
+                where TResponse : IBasicResponse
         {
             if (requestMessage == null)
                 throw new ArgumentNullException(nameof(requestMessage));
@@ -106,7 +109,10 @@ namespace Pentagon.Extensions.WebApi
                 response.ReasonPhrase = responseMessage.ReasonPhrase;
                 response.StatusCode = responseMessage.StatusCode;
                 response.Content = responseContent;
-                response.Headers = BuildHeaders<THeaders>(responseMessage.Headers);
+                response.Headers = new ApiResponseHeaders
+                                   {
+                                           BaseHeaders = responseMessage.Headers
+                                   };
 
                 var error = HandleResponseStatusCode(response, requestMessage);
 
@@ -115,14 +121,16 @@ namespace Pentagon.Extensions.WebApi
                     response.IsSuccessful = false;
                     response.Exception = error;
                 }
+                else
+                    response.IsSuccessful = true;
 
-                response.IsSuccessful = true;
+                OnResponseCreated(response);
 
                 return response;
             }
             catch (Exception exception)
             {
-                var response = new NoContentResponse<THeaders>
+                var response = new NoContentResponse
                                {
                                        IsSuccessful = false
                                };
@@ -133,102 +141,20 @@ namespace Pentagon.Extensions.WebApi
                 {
                     response.ReasonPhrase = responseMessage.ReasonPhrase;
                     response.StatusCode = responseMessage.StatusCode;
-                    response.Headers = BuildHeaders<THeaders>(responseMessage.Headers);
+                    response.Headers = new ApiResponseHeaders
+                                       {
+                                               BaseHeaders = responseMessage.Headers
+                                       };
+
+                    OnResponseCreated(response);
                 }
 
-                return response;
+                return (TResponse) (IBasicResponse) response;
             }
             finally
             {
                 responseMessage?.Dispose();
             }
-        }
-
-        THeaders BuildHeaders<THeaders>(HttpResponseHeaders headers)
-                where THeaders : IApiResponseHeaders
-        {
-            var head = BuildHeadersCore<THeaders>(headers);
-
-            return head;
-        }
-
-        /// <summary> Executes the query for single item with <see cref="TraktRequestMessage" />. </summary>
-        /// <typeparam name="T"> Type of content object. </typeparam>
-        /// <param name="requestMessage"> The request message. </param>
-        /// <param name="isCheckinRequest"> The value indicates if checkin is requested. </param>
-        /// <param name="cancellationToken"> The <see cref="CancellationToken" /> to observe while waiting for the task to complete. </param>
-        /// <exception cref="System.ArgumentException"> Single item must return content. </exception>
-        async Task<IResponse<T, THeaders>> QuerySingleItem<T, THeaders>(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders
-        {
-            var result = await QueryAsync<IResponse<T, THeaders>, THeaders>(requestMessage,
-                                                                            (message, content) =>
-                                                                            {
-                                                                                var objectContent = JsonHelpers.Deserialize<T>(content);
-                                                                                var hasValue = !Equals(objectContent, default(T));
-
-                                                                                var response = new ApiResponse<T, THeaders>
-                                                                                               {
-                                                                                                       HasValue = hasValue,
-                                                                                                       Value = objectContent
-                                                                                               };
-
-                                                                                return response;
-                                                                            },
-                                                                            cancellationToken);
-
-            if (result is IResponse<T, THeaders> res)
-                return res;
-
-            return new ApiResponse<T, THeaders>(result);
-        }
-
-        async Task<IListResponse<TContent, THeaders>> QueryList<TContent, THeaders>(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders
-        {
-            var result = await QueryAsync<IListResponse<TContent, THeaders>, THeaders>(requestMessage,
-                                                                                       (message, content) =>
-                                                                                       {
-                                                                                           var contentObject = JsonHelpers.Deserialize<IEnumerable<TContent>>(content);
-
-                                                                                           var response = new ListApiResponse<TContent, THeaders>
-                                                                                                          {
-                                                                                                                  HasValue = contentObject != null,
-                                                                                                                  Value = contentObject
-                                                                                                          };
-
-                                                                                           return response;
-                                                                                       },
-                                                                                       cancellationToken);
-
-            if (result is IListResponse<TContent, THeaders> res)
-                return res;
-
-            return new ListApiResponse<TContent, THeaders>(result);
-        }
-
-        async Task<IPagedResponse<TContent, THeaders>> QueryPagedList<TContent, THeaders>(IRequestMessage requestMessage, CancellationToken cancellationToken = default)
-                where THeaders : IApiResponseHeaders
-        {
-            var result = await QueryAsync<IPagedResponse<TContent, THeaders>, THeaders>(requestMessage,
-                                                                                        (message, content) =>
-                                                                                        {
-                                                                                            var contentObject = JsonHelpers.Deserialize<IEnumerable<TContent>>(content);
-
-                                                                                            var response = new PagedApiResponse<TContent, THeaders>
-                                                                                                           {
-                                                                                                                   HasValue = contentObject != null,
-                                                                                                                   Value = contentObject
-                                                                                                           };
-
-                                                                                            return response;
-                                                                                        },
-                                                                                        cancellationToken);
-
-            if (result is IPagedResponse<TContent, THeaders> res)
-                return res;
-
-            return new PagedApiResponse<TContent, THeaders>(result);
         }
 
         /// <summary> Gets the string content of the response. </summary>

@@ -19,5 +19,7 @@ namespace Pentagon.Extensions.WebApi.Responses
         string ReasonPhrase { get; set; }
 
         string Content { get; set; }
+
+        IApiResponseHeaders Headers { get; set; }
     }
 }
