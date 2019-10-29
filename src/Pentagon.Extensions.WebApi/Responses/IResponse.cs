@@ -6,5 +6,5 @@
 
 namespace Pentagon.Extensions.WebApi.Responses
 {
-    public interface IResponse<out TContent> : IContentResponse<TContent> { }
+    public interface IResponse<TContent> : IContentResponse<TContent> { }
 }
